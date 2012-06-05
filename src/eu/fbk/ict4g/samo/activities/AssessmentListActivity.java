@@ -114,7 +114,7 @@ public class AssessmentListActivity extends ListActivity {
 			protected void onPostExecute(Boolean result) {
 				if (dialog.isShowing()) dialog.dismiss();
 				if (result) {
-					
+					dataSource.markAssessmentAsUploaded(selectedAssessment.getId());
 				}
 			}
 		

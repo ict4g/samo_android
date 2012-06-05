@@ -18,6 +18,7 @@ public class SamoDbHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_REMOTE_ID = "remId";
 	public static final String COLUMN_TARGET_ID = "target";
 	public static final String COLUMN_TARGET_NAME = "target_name";
+	public static final String COLUMN_TYPE = "indicator_type";
 	public static final String COLUMN_UPLOADED = "uploaded";
 
 	private static final String DATABASE_NAME = "samo.db";
@@ -39,6 +40,7 @@ public class SamoDbHelper extends SQLiteOpenHelper {
 			+ COLUMN_ID + " integer primary key autoincrement, " 
 			+ COLUMN_NAME + " text not null, "
 			+ COLUMN_VALUE + " text not null, "
+			+ COLUMN_TYPE + " text not null, "
 			+ COLUMN_REMOTE_ID + " integer);";
 	public static final String TABLE_TARGETS_CREATE = "create table "
 			+ TABLE_TARGETS + "( " + COLUMN_ID

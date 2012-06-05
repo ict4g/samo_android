@@ -44,7 +44,7 @@ public class SamoDbDataSource {
 
 	public synchronized void addIndicatorColumn(Indicator indicator) {
 		//String colName = indicator.getName().replace(" ", "_").replace("?", "").toLowerCase() + "_" + indicator.getId();
-		String colName = createColumnName(indicator.getName(), indicator.getId());
+		String colName = createColumnName(indicator.getName(), indicator.getType(), indicator.getId());
 		String sql = "ALTER TABLE " + SamoDbHelper.TABLE_ASSESSMENTS 
 				+ " ADD COLUMN '" + colName + "' text;";
 		database.execSQL(sql);
@@ -81,7 +81,7 @@ public class SamoDbDataSource {
 
 		for (Indicator indicator : assessment.getIndicators()) {
 			//colName = indicator.getName().replace(" ", "_").replace("?", "").toLowerCase() + "_" + indicator.getId();
-			colName = createColumnName(indicator.getName(), indicator.getId());
+			colName = createColumnName(indicator.getName(), indicator.getType(), indicator.getId());
 			values.put(colName, indicator.getValue());
 		}
 		long insertId = database.insert(SamoDbHelper.TABLE_ASSESSMENTS, null,
@@ -103,11 +103,12 @@ public class SamoDbDataSource {
 		ContentValues values = new ContentValues();
 		values.put(SamoDbHelper.COLUMN_NAME, indicator.getName());
 		values.put(SamoDbHelper.COLUMN_VALUE, "");
+		values.put(SamoDbHelper.COLUMN_TYPE, indicator.getType());
 		values.put(SamoDbHelper.COLUMN_REMOTE_ID, indicator.getId());
 		long insertId = database.insert(SamoDbHelper.TABLE_INDICATORS, null,
 				values);
 		Cursor cursor = database.query(SamoDbHelper.TABLE_INDICATORS,
-				allColumns, SamoDbHelper.COLUMN_ID + " = " + insertId, null,
+				null, SamoDbHelper.COLUMN_ID + " = " + insertId, null,
 				null, null, null);
 		cursor.moveToFirst();
 		Indicator newIndicator = cursorToIndicator(cursor);
@@ -235,6 +236,24 @@ public class SamoDbDataSource {
 		cursor.close();
 		return targets;
 	}
+	
+	public void markAssessmentAsUploaded(long assessmentId) {
+		
+		// This can be commented
+		String[] upColumn = { SamoDbHelper.COLUMN_UPLOADED };
+		Cursor cursor = database.query(true, SamoDbHelper.TABLE_ASSESSMENTS, upColumn, SamoDbHelper.COLUMN_ID + "=" + assessmentId, null, null, null, null, null);
+		cursor.moveToFirst();
+		Log.d(this.getClass().getSimpleName(), "uploaded is " + cursor.getInt(cursor.getPosition()));
+		
+		ContentValues values = new ContentValues();
+		values.put(SamoDbHelper.COLUMN_UPLOADED, 1);
+		database.update(SamoDbHelper.TABLE_ASSESSMENTS, values, SamoDbHelper.COLUMN_ID + "=" + assessmentId, null);
+
+		// This can be commented
+		cursor = database.query(true, SamoDbHelper.TABLE_ASSESSMENTS, upColumn, SamoDbHelper.COLUMN_ID + "=" + assessmentId, null, null, null, null, null);
+		cursor.moveToFirst();
+		Log.d(this.getClass().getSimpleName(), "uploaded is " + cursor.getInt(cursor.getPosition()));
+	}
 
 	public void printColumnsOfAssessmentsTable() {
 
@@ -272,8 +291,10 @@ public class SamoDbDataSource {
 			Indicator indicator = new Indicator();
 			String columnName = cursor.getColumnName(i);
 			indicator.setName(columnName);
+			// I take the type from the column name
+			indicator.setType(columnName.split("_")[1]);
 			// I take the remId from the column name
-			indicator.setId(Long.valueOf(columnName.split("_")[1]));
+			indicator.setId(Long.valueOf(columnName.split("_")[2]));
 			indicator.setValue(cursor.getString(i));
 			assessment.addIndicator(indicator);
 		}
@@ -284,6 +305,7 @@ public class SamoDbDataSource {
 		Indicator indicator = new Indicator();
 		indicator.setId(cursor.getLong(cursor.getColumnIndex(SamoDbHelper.COLUMN_ID)));
 		indicator.setName(cursor.getString(cursor.getColumnIndex(SamoDbHelper.COLUMN_NAME)));
+		indicator.setType(cursor.getString(cursor.getColumnIndex(SamoDbHelper.COLUMN_TYPE)));
 		return indicator;
 
 	}
@@ -296,8 +318,8 @@ public class SamoDbDataSource {
 
 	}
 	
-	private String createColumnName(String name, long id) {
-		return name.replaceAll("[^A-Za-z0-9]", "").toLowerCase() + "_" + id;
+	private String createColumnName(String name, String type, long id) {
+		return name.replaceAll("[^A-Za-z0-9]", "").toLowerCase() + "_" + type + "_" + id;
 	}
 
 }

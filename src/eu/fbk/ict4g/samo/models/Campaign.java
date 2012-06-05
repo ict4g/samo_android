@@ -103,7 +103,7 @@ public class Campaign {
 
 	@Override
 	public String toString() {
-		return "Campaign [id=" + id + "]";
+		return description;
 	}
 
 }

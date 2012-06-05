@@ -1,6 +1,10 @@
 package eu.fbk.ict4g.samo.models;
 
-public class Indicator {
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+
+public class Indicator implements Parcelable {
 	
 	private long id;
 	
@@ -14,6 +18,13 @@ public class Indicator {
 	public static final String TYPE_PERCENT = "PERCENT";
 	public static final String TYPE_NUMBER = "NUMBER";
 
+	public Indicator() {
+		this.id = 0;
+		this.name = "";
+		this.type = "";
+		this.value = "";
+	}
+	
 	public long getId() {
 		return id;
 	}
@@ -43,6 +54,7 @@ public class Indicator {
 	}
 
 	public void setValue(String value) {
+		Log.d(this.getClass().getSimpleName() + " " + this.name, "Value is " + value);
 		this.value = value;
 	}
 
@@ -51,5 +63,39 @@ public class Indicator {
 		return name + ": " + value;
 	}
 
+	// Parcelable Stuff
 	
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeLong(id);
+		dest.writeString(name);
+		dest.writeString(type);
+		dest.writeString(value);
+	}
+	
+	public static final Parcelable.Creator<Indicator> CREATOR = 
+			new Creator<Indicator>() {
+				
+				@Override
+				public Indicator[] newArray(int size) {
+					return new Indicator[size];
+				}
+				
+				@Override
+				public Indicator createFromParcel(Parcel source) {
+					return new Indicator(source);
+				}
+			};
+			
+	public Indicator(Parcel in) {
+		id = in.readLong();
+		name = in.readString();
+		type = in.readString();
+		value = in.readString();
+	}
 }

@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,6 +30,8 @@ public class CampaignsActivity extends Activity {
 	List<Campaign> campaigns;
 	
 	ArrayAdapter<Campaign> campaignsAdapter;
+	
+	Campaign selectedCampaign;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -51,8 +55,24 @@ public class CampaignsActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position,
 					long id) {
-				populateDB(campaigns.get(position));
-				Toast.makeText(CampaignsActivity.this, "DB Populated with selected campaign", Toast.LENGTH_SHORT).show();
+				selectedCampaign = campaigns.get(position);
+				
+				AlertDialog.Builder builder = new AlertDialog.Builder(CampaignsActivity.this);
+				builder.setTitle(getString(R.string.about_to_use) + selectedCampaign.getDescription());
+				builder.setMessage(R.string.are_you_sure)
+				.setCancelable(false)
+				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						new PopulateDBTask(CampaignsActivity.this).execute();
+					}
+				})
+				.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();
+					}
+				});
+				AlertDialog alert = builder.create();
+				alert.show();
 			}
 		});
 	}
@@ -91,7 +111,7 @@ public class CampaignsActivity extends Activity {
 		}
 		Log.d(this.getClass().getSimpleName(), dataSource.getAllTargets().toString());
 
-//		finish();
+		finish();
 	}
 
 	public void onClick(View view) {
@@ -126,7 +146,7 @@ public class CampaignsActivity extends Activity {
 		public CampaignsTask(Context context) {
 			this.mContext = context;
 			dialog = new ProgressDialog(mContext);
-			dialog.setTitle("Loading");
+			dialog.setTitle(getString(R.string.loading));
 		}
 
 		@Override
@@ -157,6 +177,46 @@ public class CampaignsActivity extends Activity {
 			}
 		}
 
+	}
+
+	private class PopulateDBTask extends AsyncTask<Void, Void, Boolean> {
+	
+		ProgressDialog dialog;
+		Context mContext;
+	
+		/**
+		 * 
+		 */
+		public PopulateDBTask(Context context) {
+			this.mContext = context;
+			dialog = new ProgressDialog(mContext);
+			dialog.setTitle(getString(R.string.populating_db));
+		}
+	
+		@Override
+		protected void onPreExecute() {
+			dialog.show();
+		}
+	
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			try {
+				populateDB(selectedCampaign);
+				return true;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+	
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (dialog.isShowing()) dialog.dismiss();
+			if (result) {
+				Toast.makeText(mContext, "DB Populated with selected campaign", Toast.LENGTH_SHORT).show();
+			}
+		}
+	
 	}
 
 }
