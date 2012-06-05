@@ -71,6 +71,7 @@ public class NewAssessmentActivity extends Activity {
 //        indicatorAdapter =  new ArrayAdapter<Indicator>(this, android.R.layout.simple_list_item_1, indicators);
         indicatorAdapter = new IndicatorAdapter(this, R.layout.indicator_row_yesno, indicators);
         listView.setAdapter(indicatorAdapter); 
+        listView.setItemsCanFocus(true);
 //        
 //        listView.setOnItemClickListener(new OnItemClickListener() {
 //
@@ -184,16 +185,19 @@ public class NewAssessmentActivity extends Activity {
 
 	private class IndicatorAdapter extends ArrayAdapter<Indicator> {
 
+		private LayoutInflater inflater;
+		
 		public IndicatorAdapter(Context context, int textViewResourceId,
 				ArrayList<Indicator> objects) {
 			super(context, textViewResourceId, objects);
+			inflater = LayoutInflater.from(context);
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View v = convertView;
 			final Indicator selectedIndicator = indicators.get(position);
-			LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//			LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			if (selectedIndicator.getType().equals(Indicator.TYPE_STAR)) {
 				// STAR Indicator management
 				v = inflater.inflate(R.layout.indicator_row_star, null);
@@ -279,11 +283,18 @@ public class NewAssessmentActivity extends Activity {
 							selectedIndicator.setValue(editText.getText().toString());
 						
 					}
+					
+					
 				});
 			}
 			
 			((TextView) v.findViewById(R.id.nameTextView)).setText(selectedIndicator.getName());
 			return v;
+		}
+
+		@Override
+		public int getCount() {
+			return indicators.size();
 		}
 		
 	}

@@ -21,7 +21,7 @@
         </activity>
         <activity android:name=".IndicatorsActivity"></activity>
         <activity android:name=".TargetsActivity"></activity>
-        <activity android:name=".NewAssessmentActivity"></activity>
+        <activity android:name=".NewAssessmentActivity" android:windowSoftInputMode="adjustPan"></activity>
         <activity android:name=".AssessmentListActivity"></activity>
         <activity android:name=".CampaignsActivity"></activity>
     </application>

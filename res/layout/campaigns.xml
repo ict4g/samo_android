@@ -2,14 +2,29 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/Peru"
     android:orientation="vertical" >
 
-    <Button
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="5dp"
+        android:text="@string/dwnld_avail_assmts"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="30dp" />
+
+    <ImageButton
         android:id="@+id/downloadButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
         android:onClick="onClick"
-        android:text="download" />
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:src="@drawable/download" />
 
     <Button
         android:id="@+id/logDbButton"
@@ -28,7 +43,10 @@
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp" >
+
+        <!-- Preview: listitem=@layout/campaign_list_item -->
     </ListView>
 
 </LinearLayout>

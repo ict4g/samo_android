@@ -21,5 +21,12 @@
     <string name="saving_assessment">Saving Assessment&#8230;</string>
     <string name="about_to_use">"You are about to use "</string>
     <string name="are_you_sure">Are you sure?</string>
+    <string name="new_assessment">New Assessment</string>
+    <string name="sel_campaign">Select Campaign</string>
+    <string name="campaign_details">Campaign Details</string>
+    <string name="manage_assessments">Manage Assessments</string>
+    <string name="dwnld_avail_assmts">Download the available assessments</string>
+    <string name="starting_date">Starting date</string>
+    <string name="ending_date">Ending date</string>
 
 </resources>

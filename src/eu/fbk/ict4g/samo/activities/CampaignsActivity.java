@@ -11,11 +11,14 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import eu.fbk.ict4g.samo.db.SamoDbDataSource;
 import eu.fbk.ict4g.samo.models.Campaign;
@@ -48,7 +51,8 @@ public class CampaignsActivity extends Activity {
 
 		campaigns = new ArrayList<Campaign>();
 
-		campaignsAdapter = new ArrayAdapter<Campaign>(this, android.R.layout.simple_list_item_1, campaigns);
+//		campaignsAdapter = new ArrayAdapter<Campaign>(this, android.R.layout.simple_list_item_1, campaigns);
+		campaignsAdapter =  new CampaignAdapter(this, R.layout.campaign_list_item, campaigns);
 		listView.setAdapter(campaignsAdapter);
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -58,7 +62,7 @@ public class CampaignsActivity extends Activity {
 				selectedCampaign = campaigns.get(position);
 				
 				AlertDialog.Builder builder = new AlertDialog.Builder(CampaignsActivity.this);
-				builder.setTitle(getString(R.string.about_to_use) + selectedCampaign.getDescription());
+				builder.setTitle(getString(R.string.about_to_use) + selectedCampaign.getTitle());
 				builder.setMessage(R.string.are_you_sure)
 				.setCancelable(false)
 				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -132,6 +136,36 @@ public class CampaignsActivity extends Activity {
 			break;
 
 		}
+	}
+	
+	private class CampaignAdapter extends ArrayAdapter<Campaign> {
+
+		public CampaignAdapter(Context context, int textViewResourceId,
+				List<Campaign> objects) {
+			super(context, textViewResourceId, objects);
+			
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View v = convertView;
+
+			LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			v = inflater.inflate(R.layout.campaign_list_item, null);
+			Campaign campaign = campaigns.get(position);
+			TextView titleTextView = (TextView) v.findViewById(R.id.titleTextView);
+			TextView descriptionTextView = (TextView) v.findViewById(R.id.descriptionTextView);
+			TextView dateFromTextView = (TextView) v.findViewById(R.id.dateFromTextView);
+			TextView dateToTextView = (TextView) v.findViewById(R.id.dateToTextView);
+			
+			titleTextView.setText(campaign.getTitle());
+			descriptionTextView.setText(campaign.getDescription());
+			dateFromTextView.setText(campaign.getDateFrom());
+			dateToTextView.setText(campaign.getDateTo());
+			
+			return v;
+		}
+		
 	}
 
 	private class CampaignsTask extends AsyncTask<Void, Void, Boolean> {
