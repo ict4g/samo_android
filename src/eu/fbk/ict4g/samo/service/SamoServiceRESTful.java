@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,6 +32,8 @@ public class SamoServiceRESTful implements SamoServiceIF {
 	private static final String CAMPAIGNS_JSON = "/campaigns.json";
 	private static final String NEW = "/new.json";
 	private static final String TARGETS = "/targets";
+	private static final String LOGIN = "/user_sessions";
+	private static final String LOGIN_JSON = "/user_sessions.json";
 	
 	/**
 	 * 
@@ -111,6 +114,23 @@ public class SamoServiceRESTful implements SamoServiceIF {
 	}
 
 	@Override
+	public void login(String username, String password) throws SamoServiceException {
+		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+		nameValuePairs.add(new BasicNameValuePair("user_sessions[email]", username));
+		nameValuePairs.add(new BasicNameValuePair("user_sessions[password]", password));
+//		serviceInvoker.sendHTTPRequest(serverUrl + LOGIN + "/", HTTPUtils.METHOD_POST, nameValuePairs, false);
+		JSONObject jsonObject =  new JSONObject();
+		try {
+			jsonObject.put("user_sessions[email]", username);
+			jsonObject.put("user_sessions[password]", password);
+			serviceInvoker.sendHTTPRequestPOST(serverUrl + LOGIN_JSON, jsonObject);
+		} catch (JSONException e) {
+			e.printStackTrace();
+			throw new SamoServiceException(e);
+		}
+	}
+
+	@Override
 	public void publishAllAssessments() throws SamoServiceException {
 		JSONObject jsonObject =  new JSONObject();
 		JSONArray jsonArray =  new JSONArray();
@@ -149,9 +169,9 @@ public class SamoServiceRESTful implements SamoServiceIF {
 	private JSONObject assessmentToJsonObject (Assessment assessment) {
 		JSONObject jsonAssessment = new JSONObject();
 		try {
-			jsonAssessment.put("target", assessment.getTargetId());
-			jsonAssessment.put("user", assessment.getAssessorId());
-			jsonAssessment.put("date", "2012-06-01");
+			jsonAssessment.put("target_id", assessment.getTargetId());
+			jsonAssessment.put("user_id", assessment.getAssessorId());
+			jsonAssessment.put("date", assessment.getDate());
 			jsonAssessment.put("finalized", true);
 			
 			JSONObject jsonIndicator; // reusable JSONObject

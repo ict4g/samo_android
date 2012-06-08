@@ -3,7 +3,10 @@ package eu.fbk.ict4g.samo.models;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Assessment {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Assessment implements Parcelable {
 
 	private long id;
 	private long assessorId;
@@ -109,5 +112,48 @@ public class Assessment {
 		return name;
 	}
 	
+	// Parcelable Stuff
+	
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeLong(id);
+		dest.writeLong(assessorId);
+		dest.writeLong(targetId);
+		dest.writeInt(uploaded ? 1 : 0);
+		dest.writeString(name);
+		dest.writeString(assessorName);
+		dest.writeString(targetName);
+		dest.writeString(date);
+	}
+	
+	public static final Parcelable.Creator<Assessment> CREATOR = 
+			new Creator<Assessment>() {
+				
+				@Override
+				public Assessment[] newArray(int size) {
+					return new Assessment[size];
+				}
+				
+				@Override
+				public Assessment createFromParcel(Parcel source) {
+					return new Assessment(source);
+				}
+			};
+			
+	public Assessment(Parcel in) {
+		id = in.readLong();
+		assessorId = in.readLong();
+		targetId = in.readLong();
+		uploaded = in.readInt() == 1 ? true : false;
+		name = in.readString();
+		assessorName = in.readString();
+		targetName = in.readString();
+		date = in.readString();
+	}	
 	
 }

@@ -2,8 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/Peru"
+    android:background="@drawable/background"
     android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:gravity="center"
+        android:text="@string/new_assessment"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="40dp"
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/saveButton"
@@ -38,7 +48,8 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_weight="1"
-            android:ems="10" >
+            android:ems="10"
+            android:hint="@string/name_hint" >
 
             <requestFocus />
         </EditText>
@@ -70,7 +81,7 @@
             android:layout_marginRight="5dp"
             android:layout_weight="1" >
 
-            <!-- Preview: listitem=@android:layout/simple_spinner_item -->
+            <!-- Preview: listitem=@android:layout/simple_spinner_dropdown_item -->
         </Spinner>
     </LinearLayout>
 

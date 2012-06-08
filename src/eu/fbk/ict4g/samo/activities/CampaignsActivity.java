@@ -208,7 +208,8 @@ public class CampaignsActivity extends Activity {
 					campaigns.add(campaign);
 				}
 				campaignsAdapter.notifyDataSetChanged();
-			}
+			} else
+				Toast.makeText(mContext, R.string.toast_error_cannot_connect, Toast.LENGTH_SHORT).show();
 		}
 
 	}

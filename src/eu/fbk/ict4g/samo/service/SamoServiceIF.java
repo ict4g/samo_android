@@ -15,6 +15,8 @@ public interface SamoServiceIF {
 	
 	public void getTargets(long campaignId) throws SamoServiceException;
 	
+	public void login(String username, String password) throws SamoServiceException;
+	
 	public void publishAllAssessments() throws SamoServiceException;
 	
 	public void publishAssessment(Assessment assessment) throws SamoServiceException;

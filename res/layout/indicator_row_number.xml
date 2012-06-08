@@ -30,27 +30,20 @@
             android:inputType="number" >
         </EditText>
 
-        <Button
+        <ImageButton
             android:id="@+id/plusButton"
-            style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
+            android:src="@drawable/plus_16" android:paddingLeft="15dp" android:paddingRight="15dp"/>
+
+        <ImageButton
+            android:id="@+id/minusButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
-            android:text="@string/plus"
-            android:textSize="25dp" />
+            android:src="@drawable/minus_16" />
 
-        <Button
-            android:id="@+id/minusButton"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:paddingLeft="18dp"
-            android:paddingRight="18dp"
-            android:text="@string/minus"
-            android:textSize="25dp" />
     </LinearLayout>
 
 </TableRow>

@@ -1,6 +1,7 @@
 package eu.fbk.ict4g.samo.activities;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import android.app.Activity;
@@ -11,15 +12,20 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.RatingBar;
+import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
@@ -31,124 +37,132 @@ import eu.fbk.ict4g.samo.models.Indicator;
 import eu.fbk.ict4g.samo.models.Target;
 
 public class NewAssessmentActivity extends Activity {
-
-	SamoDbDataSource dataSource;
 	
+	SamoDbDataSource dataSource;
+
 	ArrayAdapter<Target> targetAdapter;
-	ArrayAdapter<Indicator> indicatorAdapter;
+	//	ArrayAdapter<Indicator> indicatorAdapter;
+	IndicatorAdapter indicatorAdapter;
 	Target selectedTarget;
 	ArrayList<Indicator> indicators;
 	List<Target> targets;
-	
+
 	Assessment newAssessment;
-	
+
 	EditText nameEditText;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.new_assessment);
+		
+		ListView listView = (ListView) findViewById(R.id.indicatorsListView);
+		Spinner spinner = (Spinner) findViewById(R.id.targetSpinner);
+		nameEditText = (EditText) findViewById(R.id.nameEditText);
 
-        ListView listView = (ListView) findViewById(R.id.indicatorsListView);
-        Spinner spinner = (Spinner) findViewById(R.id.targetSpinner);
-        nameEditText = (EditText) findViewById(R.id.nameEditText);
-        
-        dataSource = new SamoDbDataSource(this);
-        dataSource.open();     
-        
-        targets = dataSource.getAllTargets();
-        if (!targets.isEmpty()) selectedTarget = targets.get(0);
-        
-        targetAdapter =  new ArrayAdapter<Target>(this, android.R.layout.simple_spinner_item, targets);
-        spinner.setAdapter(targetAdapter);    
-        
-        if (savedInstanceState != null)
-        	indicators = savedInstanceState.getParcelableArrayList(getString(R.string.indicators));
-        else
-        	indicators = (ArrayList<Indicator>) dataSource.getAllIndicators();
-        
-        
-//        indicatorAdapter =  new ArrayAdapter<Indicator>(this, android.R.layout.simple_list_item_1, indicators);
-        indicatorAdapter = new IndicatorAdapter(this, R.layout.indicator_row_yesno, indicators);
-        listView.setAdapter(indicatorAdapter); 
-        listView.setItemsCanFocus(true);
-//        
-//        listView.setOnItemClickListener(new OnItemClickListener() {
-//
-//			@Override
-//			public void onItemClick(AdapterView<?> parent, View view, int position,
-//					long id) {
-//
-//				// Create the alert for the pickupCode
-//				AlertDialog.Builder alert = new AlertDialog.Builder(NewAssessmentActivity.this);
-//			
-//				alert.setTitle("Value");
-//				//alert.setMessage("Message");
-//			
-//				// Set an EditText view to get user input 
-//				final EditText input = new EditText(NewAssessmentActivity.this);
-//				alert.setView(input);
-//				
-//				final int fPosition = position;
-//			
-//				alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-//					public void onClick(DialogInterface dialog, int whichButton) {
-//						Editable value = input.getText();
-//						if (value.length() > 0) {
-//							Log.d("value", "" + value);
-//							indicators.get(fPosition).setValue(value.toString());
-//							indicatorAdapter.notifyDataSetChanged();
-//						} else
-//							Toast.makeText(getApplicationContext(), "Value not valid", Toast.LENGTH_SHORT).show();
-//					}
-//				});
-//			
-//				alert.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-//					public void onClick(DialogInterface dialog, int whichButton) {
-//						// Canceled.
-//					}
-//				});
-//			
-//				alert.show();
-//
-//				
-//			}
-//		});
-        
-        spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+		dataSource = new SamoDbDataSource(this);
+		dataSource.open();     
+
+		targets = dataSource.getAllTargets();
+		if (!targets.isEmpty()) selectedTarget = targets.get(0);
+
+		targetAdapter =  new ArrayAdapter<Target>(this, android.R.layout.simple_spinner_dropdown_item, targets);
+		spinner.setAdapter(targetAdapter);    
+
+		if (savedInstanceState != null) {
+			Log.d(getClass().getSimpleName(), "savedInstanceState is NOT null");
+			indicators = savedInstanceState.getParcelableArrayList(getString(R.string.indicators));	
+			for (Indicator i : indicators) {
+				Log.d(getClass().getSimpleName(), "saved value for " + i.getName() + " is " + i.getValue());
+			}
+		} else {
+			Log.d(getClass().getSimpleName(), "savedInstanceState is null");
+			indicators = (ArrayList<Indicator>) dataSource.getAllIndicators();
+		}
+
+
+		//        indicatorAdapter =  new ArrayAdapter<Indicator>(this, android.R.layout.simple_list_item_1, indicators);
+		//		indicatorAdapter = new IndicatorAdapter(this, R.layout.indicator_row_yesno, indicators);
+		indicatorAdapter = new IndicatorAdapter(this);
+		listView.setAdapter(indicatorAdapter); 
+		listView.setItemsCanFocus(true);
+		//        
+		//        listView.setOnItemClickListener(new OnItemClickListener() {
+		//
+		//			@Override
+		//			public void onItemClick(AdapterView<?> parent, View view, int position,
+		//					long id) {
+		//
+		//				// Create the alert for the pickupCode
+		//				AlertDialog.Builder alert = new AlertDialog.Builder(NewAssessmentActivity.this);
+		//			
+		//				alert.setTitle("Value");
+		//				//alert.setMessage("Message");
+		//			
+		//				// Set an EditText view to get user input 
+		//				final EditText input = new EditText(NewAssessmentActivity.this);
+		//				alert.setView(input);
+		//				
+		//				final int fPosition = position;
+		//			
+		//				alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+		//					public void onClick(DialogInterface dialog, int whichButton) {
+		//						Editable value = input.getText();
+		//						if (value.length() > 0) {
+		//							Log.d("value", "" + value);
+		//							indicators.get(fPosition).setValue(value.toString());
+		//							indicatorAdapter.notifyDataSetChanged();
+		//						} else
+		//							Toast.makeText(getApplicationContext(), "Value not valid", Toast.LENGTH_SHORT).show();
+		//					}
+		//				});
+		//			
+		//				alert.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+		//					public void onClick(DialogInterface dialog, int whichButton) {
+		//						// Canceled.
+		//					}
+		//				});
+		//			
+		//				alert.show();
+		//
+		//				
+		//			}
+		//		});
+
+		spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				selectedTarget =  targets.get(position);
-				
+
 			}
 
 			@Override
 			public void onNothingSelected(AdapterView<?> parent) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
 	}
 
 	@Override
 	protected void onResume() {
-//		targetsDataSource.open();
-//		indicatorsDataSource.open();
-//        assessmentsDataSource.open();
+		//		targetsDataSource.open();
+		//		indicatorsDataSource.open();
+		//        assessmentsDataSource.open();
 		dataSource.open();
 		super.onResume();
 	}
 
 	@Override
 	protected void onPause() {
-//		targetsDataSource.close();
-//		indicatorsDataSource.close();
-//        assessmentsDataSource.close();
+		//		targetsDataSource.close();
+		//		indicatorsDataSource.close();
+		//        assessmentsDataSource.close();
 		dataSource.close();
 		super.onPause();
 	}
-	
+
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
@@ -162,148 +176,336 @@ public class NewAssessmentActivity extends Activity {
 	}
 
 	public void onClick(View view) {
-		
+
 		switch (view.getId()) {
 		case R.id.saveButton:
 			new SaveAssessmentTask(NewAssessmentActivity.this).execute();
 			break;
-		
+
 		}
 	}
-	
+
 	private void saveAssessment() {
 		newAssessment = new Assessment();
 		newAssessment.setName(nameEditText.getText().toString());
 		newAssessment.setTargetId(selectedTarget.getId());
 		newAssessment.setTargetName(selectedTarget.getName());
 		newAssessment.setAssessorId(1); // TODO get it from somewhere
+
+		// date stuff
+		Calendar now = Calendar.getInstance();
+		String month = (now.get(Calendar.MONTH) + 1) < 10 ? "0" + (now.get(Calendar.MONTH) + 1) : (now.get(Calendar.MONTH) + 1) + "";
+		String day = now.get(Calendar.DAY_OF_MONTH) < 10 ? "0" + now.get(Calendar.DAY_OF_MONTH) : now.get(Calendar.DAY_OF_MONTH) + "";
+		newAssessment.setDate(now.get(Calendar.YEAR) + "-" + month + "-" + day);
 		
 		newAssessment.setIndicators(indicators);
 		dataSource.createAssessment(newAssessment);
 		finish();
 	}
 
-	private class IndicatorAdapter extends ArrayAdapter<Indicator> {
+	private class IndicatorAdapter extends BaseAdapter {
 
-		private LayoutInflater inflater;
-		
-		public IndicatorAdapter(Context context, int textViewResourceId,
-				ArrayList<Indicator> objects) {
-			super(context, textViewResourceId, objects);
-			inflater = LayoutInflater.from(context);
+		private LayoutInflater mInflater;
+
+		public IndicatorAdapter(Context context) {
+			//super(context, textViewResourceId, objects);
+			// Cache the LayoutInflate to avoid asking for a new one each time.
+			mInflater = LayoutInflater.from(context);
+		}
+
+		class ViewHolderText {
+			TextView nameTextView;
+			EditText editText;
+		}
+
+		class ViewHolderYesNo {
+			TextView nameTextView;
+			RadioGroup radioGroup;
+		}
+
+		class ViewHolderNumber {
+			TextView nameTextView;
+			EditText editText;
+			ImageButton plusButton, minusButton;			
+		}
+
+		class ViewHolderPercent {
+			TextView nameTextView, percentTextView;
+			SeekBar seekBar;
+		}
+
+		class ViewHolderStar {
+			TextView nameTextView;
+			RatingBar ratingBar;
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			View v = convertView;
-			final Indicator selectedIndicator = indicators.get(position);
-//			LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			if (selectedIndicator.getType().equals(Indicator.TYPE_STAR)) {
+
+			final Indicator currentIndicator = indicators.get(position);
+
+			if (currentIndicator.getType().equals(Indicator.TYPE_STAR)) {
 				// STAR Indicator management
-				v = inflater.inflate(R.layout.indicator_row_star, null);
-			} else if (selectedIndicator.getType().equals(Indicator.TYPE_NUMBER)) {
-				// NUMBER Indicator management
-				v = inflater.inflate(R.layout.indicator_row_number, null);
-				final EditText editText = (EditText) v.findViewById(R.id.editText);
-				if (selectedIndicator.getValue() != null) 
-					editText.setText(selectedIndicator.getValue());
-				editText.setOnFocusChangeListener(new OnFocusChangeListener() {
+				ViewHolderStar holder;
+				// When convertView is not null, we can reuse it directly, there is no need
+				// to reinflate it. We only inflate a new View when the convertView supplied
+				// by ListView is null.
+				if (convertView == null || !ViewHolderStar.class.isInstance(convertView.getTag())) {
+					convertView = mInflater.inflate(R.layout.indicator_row_star, null);
+
+					// Creates a ViewHolder and store references to the two children views
+					// we want to bind data to.
+					holder = new ViewHolderStar();
+					holder.nameTextView = (TextView) convertView.findViewById(R.id.nameTextView);
+					holder.ratingBar = (RatingBar) convertView.findViewById(R.id.ratingBar);
+
+					convertView.setTag(holder);
+				} else {
+					// Get the ViewHolder back to get fast access to the TextView
+					// and the ImageView.
+					holder = (ViewHolderStar) convertView.getTag();
+				}
+
+				// name
+				holder.nameTextView.setText(currentIndicator.getName());
+
+				// value
+				// set the listeners
+				holder.ratingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
 					
+					@Override
+					public void onRatingChanged(RatingBar ratingBar, float rating,
+							boolean fromUser) {
+						if (fromUser) {
+							currentIndicator.setValue("" + rating);
+						}
+						
+					}
+				});
+				
+				// restore previous value, if any
+				if (currentIndicator.getValue() != null) 
+					holder.ratingBar.setRating(Float.parseFloat(currentIndicator.getValue().toString()));
+
+			} else if (currentIndicator.getType().equals(Indicator.TYPE_NUMBER)) {
+				// NUMBER Indicator management
+				ViewHolderNumber holder;
+				// When convertView is not null, we can reuse it directly, there is no need
+				// to reinflate it. We only inflate a new View when the convertView supplied
+				// by ListView is null.
+				if (convertView == null || !ViewHolderNumber.class.isInstance(convertView.getTag())) {
+					convertView = mInflater.inflate(R.layout.indicator_row_number, null);
+
+					// Creates a ViewHolder and store references to the two children views
+					// we want to bind data to.
+					holder = new ViewHolderNumber();
+					holder.nameTextView = (TextView) convertView.findViewById(R.id.nameTextView);
+					holder.editText = (EditText) convertView.findViewById(R.id.editText);
+					holder.plusButton = (ImageButton) convertView.findViewById(R.id.plusButton);
+					holder.minusButton = (ImageButton) convertView.findViewById(R.id.minusButton);
+
+					convertView.setTag(holder);
+				} else {
+					// Get the ViewHolder back to get fast access to the TextView
+					// and the ImageView.
+					holder = (ViewHolderNumber) convertView.getTag();
+				}
+
+				// name
+				holder.nameTextView.setText(currentIndicator.getName());
+
+				// value
+				// set the listeners
+				holder.editText.setOnFocusChangeListener(new OnFocusChangeListener() {
+
 					@Override
 					public void onFocusChange(View v, boolean hasFocus) {
 						if (!hasFocus)
-							selectedIndicator.setValue(editText.getText().toString());
-						
+							currentIndicator.setValue(((EditText) v).getText().toString());
+
 					}
 				});
-			} else if (selectedIndicator.getType().equals(Indicator.TYPE_YESNO)) {
+
+				holder.plusButton.setOnClickListener(new PlusMinusOnClickListener(holder.editText));
+				holder.minusButton.setOnClickListener(new PlusMinusOnClickListener(holder.editText));
+
+				// restore previous value, if any
+				if (currentIndicator.getValue() != null) 
+					holder.editText.setText(currentIndicator.getValue());
+
+			} else if (currentIndicator.getType().equals(Indicator.TYPE_YESNO)) {
 				// YESNO Indicator management
-				v = inflater.inflate(R.layout.indicator_row_yesno, null);
-				RadioGroup radioGroup = (RadioGroup) v.findViewById(R.id.radioGroup);
-				if (selectedIndicator.getValue() != null) 
-					if (selectedIndicator.getValue().equalsIgnoreCase("0"))
-						radioGroup.check(R.id.noRadioButton);
-					else
-						radioGroup.check(R.id.yesRadioButton);
-				
-				radioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-					
+				ViewHolderYesNo holder;
+
+				// When convertView is not null, we can reuse it directly, there is no need
+				// to reinflate it. We only inflate a new View when the convertView supplied
+				// by ListView is null.
+				if (convertView == null || !ViewHolderYesNo.class.isInstance(convertView.getTag())) {
+					convertView = mInflater.inflate(R.layout.indicator_row_yesno, null);
+
+					// Creates a ViewHolder and store references to the two children views
+					// we want to bind data to.
+					holder = new ViewHolderYesNo();
+					holder.nameTextView = (TextView) convertView.findViewById(R.id.nameTextView);
+					holder.radioGroup = (RadioGroup) convertView.findViewById(R.id.radioGroup);
+
+					convertView.setTag(holder);
+				} else {
+					// Get the ViewHolder back to get fast access to the TextView
+					// and the ImageView.
+					holder = (ViewHolderYesNo) convertView.getTag();
+				}
+
+				// name
+				holder.nameTextView.setText(currentIndicator.getName());
+
+				// value
+				// set the listener
+				holder.radioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
 					@Override
 					public void onCheckedChanged(RadioGroup group, int checkedId) {
-						switch (group.getCheckedRadioButtonId()) {
+						switch (checkedId) {
 						case R.id.yesRadioButton:
-							selectedIndicator.setValue("1"); // true
+							currentIndicator.setValue("1"); // true
 							break;
 
 						case R.id.noRadioButton:
-							selectedIndicator.setValue("0"); // false					
+							currentIndicator.setValue("0"); // false					
 							break;
 						}
-						indicatorAdapter.notifyDataSetChanged();
+						//indicatorAdapter.notifyDataSetChanged();
 					}
 				});
-			} else if (selectedIndicator.getType().equals(Indicator.TYPE_PERCENT)) {
+
+				// restore previous value, if any
+				if (currentIndicator.getValue() != null) 
+					if (currentIndicator.getValue().equalsIgnoreCase("1"))
+						holder.radioGroup.check(R.id.yesRadioButton);
+					else if (currentIndicator.getValue().equalsIgnoreCase("0"))
+						holder.radioGroup.check(R.id.noRadioButton);
+					else
+						holder.radioGroup.clearCheck();
+
+
+			} else if (currentIndicator.getType().equals(Indicator.TYPE_PERCENT)) {
 				// PERCENT Indicator management
-				v = inflater.inflate(R.layout.indicator_row_percent, null);
-				SeekBar seekBar = (SeekBar) v.findViewById(R.id.seekBar);
-				final TextView percentTextView = (TextView) v.findViewById(R.id.percentTextView);
-				seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-					
+				final ViewHolderPercent holder;
+				// When convertView is not null, we can reuse it directly, there is no need
+				// to reinflate it. We only inflate a new View when the convertView supplied
+				// by ListView is null.
+				if (convertView == null || !ViewHolderPercent.class.isInstance(convertView.getTag())) {
+					convertView = mInflater.inflate(R.layout.indicator_row_percent, null);
+
+					// Creates a ViewHolder and store references to the two children views
+					// we want to bind data to.
+					holder = new ViewHolderPercent();
+					holder.nameTextView = (TextView) convertView.findViewById(R.id.nameTextView);
+					holder.seekBar = (SeekBar) convertView.findViewById(R.id.seekBar);
+					holder.percentTextView = (TextView) convertView.findViewById(R.id.percentTextView);
+
+					convertView.setTag(holder);
+				} else {
+					// Get the ViewHolder back to get fast access to the TextView
+					// and the ImageView.
+					holder = (ViewHolderPercent) convertView.getTag();
+				}
+
+				// name
+				holder.nameTextView.setText(currentIndicator.getName());
+
+				// value
+				// set the listener
+				holder.seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
 					@Override
 					public void onStopTrackingTouch(SeekBar seekBar) {
-						selectedIndicator.setValue(""+ seekBar.getProgress());
-						indicatorAdapter.notifyDataSetChanged();
-						
+						currentIndicator.setValue(""+ seekBar.getProgress());
+
 					}
-					
+
 					@Override
 					public void onStartTrackingTouch(SeekBar seekBar) {
-						// TODO Auto-generated method stub
-						
+						holder.percentTextView.setText(seekBar.getProgress() + "%");
+
 					}
-					
+
 					@Override
 					public void onProgressChanged(SeekBar seekBar, int progress,
 							boolean fromUser) {
-						percentTextView.setText(progress + "%");
-						
+						holder.percentTextView.setText(progress + "%");
+
 					}
 				});
 			} else {
 				// TEXT Indicator management
-				v = inflater.inflate(R.layout.indicator_row_text, null);
-				final EditText editText = (EditText) v.findViewById(R.id.editText);
-				if (selectedIndicator.getValue() != null) 
-					editText.setText(selectedIndicator.getValue());
-				editText.setOnFocusChangeListener(new OnFocusChangeListener() {
-					
+				ViewHolderText holder;
+
+				// When convertView is not null, we can reuse it directly, there is no need
+				// to reinflate it. We only inflate a new View when the convertView supplied
+				// by ListView is null.
+				if (convertView == null || !ViewHolderText.class.isInstance(convertView.getTag())) {
+					convertView = mInflater.inflate(R.layout.indicator_row_text, null);
+
+					// Creates a ViewHolder and store references to the two children views
+					// we want to bind data to.
+					holder = new ViewHolderText();
+					holder.nameTextView = (TextView) convertView.findViewById(R.id.nameTextView);
+					holder.editText = (EditText) convertView.findViewById(R.id.editText);
+
+					convertView.setTag(holder);
+				} else {
+					// Get the ViewHolder back to get fast access to the TextView
+					// and the ImageView.
+					holder = (ViewHolderText) convertView.getTag();
+				}
+
+				// name
+				holder.nameTextView.setText(currentIndicator.getName());
+
+				// value
+				// set the listener
+				holder.editText.setOnFocusChangeListener(new OnFocusChangeListener() {
+
 					@Override
 					public void onFocusChange(View v, boolean hasFocus) {
 						if (!hasFocus)
-							selectedIndicator.setValue(editText.getText().toString());
-						
+							currentIndicator.setValue(((EditText) v).getText().toString());
+
 					}
-					
-					
+
+
 				});
+				// restore previous value, if any
+				if (currentIndicator.getValue() != null) 
+					holder.editText.setText(currentIndicator.getValue());
 			}
-			
-			((TextView) v.findViewById(R.id.nameTextView)).setText(selectedIndicator.getName());
-			return v;
+			return convertView;
+
 		}
 
 		@Override
 		public int getCount() {
 			return indicators.size();
 		}
-		
+
+		@Override
+		public Object getItem(int position) {
+			return position;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
 	}
 
 	private class SaveAssessmentTask extends AsyncTask<Void, Void, Boolean> {
-	
+
 		ProgressDialog dialog;
 		Context mContext;
-	
+
 		/**
 		 * 
 		 */
@@ -312,12 +514,12 @@ public class NewAssessmentActivity extends Activity {
 			dialog = new ProgressDialog(mContext);
 			dialog.setTitle(getString(R.string.saving_assessment));
 		}
-	
+
 		@Override
 		protected void onPreExecute() {
 			dialog.show();
 		}
-	
+
 		@Override
 		protected Boolean doInBackground(Void... params) {
 			try {
@@ -328,7 +530,7 @@ public class NewAssessmentActivity extends Activity {
 				return false;
 			}
 		}
-	
+
 		@Override
 		protected void onPostExecute(Boolean result) {
 			if (dialog.isShowing()) dialog.dismiss();
@@ -337,7 +539,40 @@ public class NewAssessmentActivity extends Activity {
 				Log.d(mContext.getClass().getSimpleName(), "assessment created: " + newAssessment.getName() + newAssessment.getIndicators().toString());
 			}
 		}
-	
+
 	}
-	
+
+	private class PlusMinusOnClickListener implements OnClickListener {
+		EditText mEditText;
+
+		/**
+		 * @param editText
+		 */
+		public PlusMinusOnClickListener(EditText editText) {
+			this.mEditText = editText;
+		}
+
+		@Override
+		public void onClick(View v) {
+			mEditText.requestFocus();
+			switch (v.getId()) {
+			case R.id.plusButton:
+				mEditText.setText(
+						Integer.parseInt(mEditText.getText().toString().equalsIgnoreCase("") ? "0" : mEditText.getText().toString()) + 1 + "",
+						TextView.BufferType.EDITABLE);
+				break;
+
+			case R.id.minusButton:
+				int value = Integer.parseInt(mEditText.getText().toString().equalsIgnoreCase("") ? "0" : mEditText.getText().toString());
+				mEditText.setText(value - 1 >= 0 ? value - 1 + "" : "", 
+						TextView.BufferType.EDITABLE);
+				break;
+
+			default:
+				break;
+			}
+		}
+
+	}
+
 }

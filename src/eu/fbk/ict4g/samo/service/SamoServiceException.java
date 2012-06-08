@@ -1,7 +1,7 @@
 package eu.fbk.ict4g.samo.service;
 
 /**
- * Thrown when something goes wrong with the BringTheFood Service
+ * Thrown when something goes wrong with the SAMo Service
  * 
  * @author pietro
  *

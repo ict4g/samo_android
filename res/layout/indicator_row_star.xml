@@ -2,7 +2,7 @@
 <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/BurlyWood"
+    android:background="@drawable/list_item_background"
     android:paddingTop="10dp" >
 
     <TextView
@@ -17,7 +17,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <RatingBar
-        android:id="@+id/accuracyRatingBar"
+        android:id="@+id/ratingBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"

@@ -67,7 +67,7 @@ public class HTTPUtils {
 		httpContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
 	}
 
-	public synchronized JSONObject sendHTTPRequest(String url, String method, List<NameValuePair> nameValuePairs, boolean isArray) {
+	public synchronized JSONObject sendHTTPRequest(String url, String method, List<NameValuePair> nameValuePairs, boolean isArray) throws SamoServiceException {
 
 		JSONObject result = null;
 		Log.d(this.getClass().getName(), url);
@@ -116,16 +116,16 @@ public class HTTPUtils {
 				result = new JSONObject(responseGet);
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new SamoServiceException(e);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new SamoServiceException(e);
 		}
 
 		return result;
 
 	}
 	
-	public synchronized void sendHTTPRequestPOST(String url, JSONObject jsonObject) {
+	public synchronized void sendHTTPRequestPOST(String url, JSONObject jsonObject) throws SamoServiceException {
 		Log.d(this.getClass().getName(), url);
 		HttpPost httpPost = new HttpPost(url);
 		ResponseHandler<String> responseHandler = new BasicResponseHandler();
@@ -137,11 +137,11 @@ public class HTTPUtils {
 			responsePost = httpClient.execute(httpPost, responseHandler, httpContext);
 			Log.w("POST response", responsePost);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			throw new SamoServiceException(e);
 		} catch (ClientProtocolException e) {
-			e.printStackTrace();
+			throw new SamoServiceException(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new SamoServiceException(e);
 		}
 		
 	}

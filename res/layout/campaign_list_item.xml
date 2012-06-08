@@ -3,13 +3,14 @@
     android:id="@+id/sfds"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/BurlyWood" >
+    android:background="@drawable/list_item_background" >
 
     <ImageView
         android:id="@+id/imageView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/mozambique_128" />
+        android:src="@drawable/mozambique_128"
+        android:contentDescription="@string/app_name" />
 
     <LinearLayout
         android:layout_width="match_parent"

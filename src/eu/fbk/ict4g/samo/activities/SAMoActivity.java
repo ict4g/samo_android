@@ -1,5 +1,7 @@
 package eu.fbk.ict4g.samo.activities;
 
+import java.text.BreakIterator;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -49,6 +51,11 @@ public class SAMoActivity extends Activity {
 			
 		case R.id.publishButton:
 			new PublishTask(this).execute();
+			break;
+		
+		case R.id.loginButton:
+			new LoginTask(this).execute();
+			break;
 		}
 	}
 
@@ -92,4 +99,44 @@ public class SAMoActivity extends Activity {
 		}
 	
 	}
+
+	private class LoginTask extends AsyncTask<Void, Void, Boolean> {
+		
+			ProgressDialog dialog;
+			Context mContext;
+		
+			/**
+			 * 
+			 */
+			public LoginTask(Context context) {
+				this.mContext = context;
+				dialog = new ProgressDialog(mContext);
+				dialog.setTitle("Loading");
+			}
+		
+			@Override
+			protected void onPreExecute() {
+				dialog.show();
+			}
+		
+			@Override
+			protected Boolean doInBackground(Void... params) {
+				try {
+					SAMoApp.getService().login("manager@gmail.com", "12345");
+					return true;
+				} catch (SamoServiceException e) {
+					e.printStackTrace();
+					return false;
+				}
+			}
+		
+			@Override
+			protected void onPostExecute(Boolean result) {
+				if (dialog.isShowing()) dialog.dismiss();
+				if (result) {
+					
+				}
+			}
+		
+		}
 }
