@@ -269,6 +269,8 @@ public class SamoDbDataSource {
 		database.execSQL(SamoDbHelper.TABLE_INDICATORS_CREATE);
 		database.execSQL("DROP TABLE IF EXISTS " + SamoDbHelper.TABLE_TARGETS);
 		database.execSQL(SamoDbHelper.TABLE_TARGETS_CREATE);
+		// TODO database.execSQL("DROP TABLE IF EXISTS " + SamoDbHelper.TABLE_CAMPAIGNS);
+		// TODO database.execSQL(SamoDbHelper.TABLE_CAMPAIGNS_CREATE);
 		resetAssessmentsTable();
 		
 	}

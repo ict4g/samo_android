@@ -17,7 +17,7 @@ public interface SamoServiceIF {
 	
 	public void login(String username, String password) throws SamoServiceException;
 	
-	public void publishAllAssessments() throws SamoServiceException;
+	public void publishAllAssessments(List<Assessment> assessments) throws SamoServiceException;
 	
 	public void publishAssessment(Assessment assessment) throws SamoServiceException;
 

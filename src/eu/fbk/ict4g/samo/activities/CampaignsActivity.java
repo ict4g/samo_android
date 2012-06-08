@@ -100,16 +100,26 @@ public class CampaignsActivity extends Activity {
 		dataSource.resetAll();
 		dataSource.printColumnsOfAssessmentsTable();
 
+		// Populate tables
+		// campaign
+		// TODO add an entry to the campaign table
+		
+		// assessment and indicator
 		for (Indicator indicator : campaign.getIndicators()) {
+			// add a column to the assessment table
 			Log.d(this.getClass().getSimpleName(), "adding indicator column");
 			dataSource.addIndicatorColumn(indicator);
+			
+			// add an entry to the indicator table
 			Log.d(this.getClass().getSimpleName(), "adding indicator '" + indicator.getName() + "' with id: " + indicator.getId());
 			dataSource.createIndicator(indicator);			
 		}
 		Log.d(this.getClass().getSimpleName(), dataSource.getAllIndicators().toString());
 
+		// target
 		Log.d(this.getClass().getSimpleName(), "adding targets");
 		for (Target target : campaign.getTargets()) {
+			// add an entry to the target table
 			Log.d("target", target.getName());
 			dataSource.createTarget(target.getName());
 		}

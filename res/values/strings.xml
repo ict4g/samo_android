@@ -3,6 +3,7 @@
 
     <string name="about_to_use">"You are about to use "</string>
     <string name="about_to_upload_all">"You are about to upload all the assessments"</string>
+    <string name="about_to_delete_all">"You are about to delete all the assessments"</string>
     <string name="app_name">SAMo</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="assessments">Assessments</string>

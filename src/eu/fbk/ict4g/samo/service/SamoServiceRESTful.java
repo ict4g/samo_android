@@ -131,11 +131,14 @@ public class SamoServiceRESTful implements SamoServiceIF {
 	}
 
 	@Override
-	public void publishAllAssessments() throws SamoServiceException {
+	public void publishAllAssessments(List<Assessment> assessments) throws SamoServiceException {
 		JSONObject jsonObject =  new JSONObject();
 		JSONArray jsonArray =  new JSONArray();
-		for (int i = 0; i < 5; i++) {
-			jsonArray.put(createJsonAssessment());
+//		for (int i = 0; i < 5; i++) {
+//			jsonArray.put(createJsonAssessment());
+//		}
+		for (Assessment assessment : assessments) {
+			jsonArray.put(assessmentToJsonObject(assessment));
 		}
 		try {
 			jsonObject.put("assessments", jsonArray);

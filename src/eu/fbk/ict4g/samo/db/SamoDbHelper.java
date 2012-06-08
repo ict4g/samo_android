@@ -8,16 +8,21 @@ import android.util.Log;
 public class SamoDbHelper extends SQLiteOpenHelper {
 
 	public static final String TABLE_ASSESSMENTS = "assessment";
+	public static final String TABLE_CAMPAIGNS = "campaign";
 	public static final String TABLE_INDICATORS = "indicator";
 	public static final String TABLE_TARGETS = "target";
 	public static final String COLUMN_ASSESSOR_ID = "user";
 	public static final String COLUMN_DATE = "date";
+	public static final String COLUMN_DATE_FROM = "campaign_date_from";
+	public static final String COLUMN_DATE_TO = "campaign_date_to";
+	public static final String COLUMN_DESCRIPTION = "campaign_description";
 	public static final String COLUMN_ID = "_id";
 	public static final String COLUMN_NAME = "name";
 	public static final String COLUMN_VALUE = "value";
 	public static final String COLUMN_REMOTE_ID = "remId";
 	public static final String COLUMN_TARGET_ID = "target";
 	public static final String COLUMN_TARGET_NAME = "target_name";
+	public static final String COLUMN_TITLE = "campaign_title";
 	public static final String COLUMN_TYPE = "indicator_type";
 	public static final String COLUMN_UPLOADED = "uploaded";
 
@@ -35,6 +40,15 @@ public class SamoDbHelper extends SQLiteOpenHelper {
 			+ COLUMN_UPLOADED + " integer, " // 5
 			+ COLUMN_DATE + " text " // 6
 			+ ");";
+	public static final String TABLE_CAMPAIGNS_CREATE = "create table "
+			+ TABLE_CAMPAIGNS + "( " 
+			+ COLUMN_ID + " integer primary key autoincrement, " 
+			+ COLUMN_TITLE + " text not null, "
+			+ COLUMN_DESCRIPTION + " text not null, "
+			+ COLUMN_DATE_FROM + " text not null, "
+			+ COLUMN_DATE_TO + " text not null, "
+			+ COLUMN_REMOTE_ID + " integer);";
+	
 	public static final String TABLE_INDICATORS_CREATE = "create table "
 			+ TABLE_INDICATORS + "( " 
 			+ COLUMN_ID + " integer primary key autoincrement, " 
@@ -42,6 +56,7 @@ public class SamoDbHelper extends SQLiteOpenHelper {
 			+ COLUMN_VALUE + " text not null, "
 			+ COLUMN_TYPE + " text not null, "
 			+ COLUMN_REMOTE_ID + " integer);";
+	
 	public static final String TABLE_TARGETS_CREATE = "create table "
 			+ TABLE_TARGETS + "( " + COLUMN_ID
 			+ " integer primary key autoincrement, " + COLUMN_NAME
@@ -54,9 +69,9 @@ public class SamoDbHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL(TABLE_ASSESSMENTS_CREATE);
+		// TODO db.execSQL(TABLE_CAMPAIGNS_CREATE);
 		db.execSQL(TABLE_INDICATORS_CREATE);
 		db.execSQL(TABLE_TARGETS_CREATE);
-
 	}
 
 	@Override
@@ -65,6 +80,7 @@ public class SamoDbHelper extends SQLiteOpenHelper {
 				"Upgrading database from version " + oldVersion + " to "
 						+ newVersion + ", which will destroy all old data");
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_ASSESSMENTS);
+		// TODO db.execSQL("DROP TABLE IF EXISTS " + TABLE_CAMPAIGNS);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_INDICATORS);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_TARGETS);
 		onCreate(db);

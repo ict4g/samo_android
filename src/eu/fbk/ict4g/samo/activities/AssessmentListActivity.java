@@ -173,30 +173,37 @@ public class AssessmentListActivity extends ListActivity {
 	}
 
 	public void onClick(View view) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage(R.string.are_you_sure);
+		builder.setCancelable(false);
+		
 		switch (view.getId()) {
 		case R.id.deleteAllButton:
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle(getString(R.string.about_to_upload_all));
-			builder.setMessage(R.string.are_you_sure)
-			.setCancelable(false)
-			.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+			builder.setTitle(getString(R.string.about_to_delete_all));
+			builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
 					new DeleteAllAssessmentsTask(AssessmentListActivity.this).execute();
 				}
-			})
-			.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int id) {
-					dialog.cancel();
-				}
 			});
-			AlertDialog alert = builder.create();
-			alert.show();
 			break;
 
 		case R.id.uploadAllButton:
-
+			builder.setTitle(getString(R.string.about_to_delete_all));
+			builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					new PublishAllTask(AssessmentListActivity.this).execute();
+				}
+			});
 			break;
 		}
+		
+		builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.cancel();
+			}
+		});
+		AlertDialog alert = builder.create();
+		alert.show();
 	}
 
 	private class PublishTask extends AsyncTask<Void, Void, Boolean> {
@@ -239,6 +246,50 @@ public class AssessmentListActivity extends ListActivity {
 				Toast.makeText(mContext, R.string.toast_error_cannot_connect, Toast.LENGTH_SHORT).show();
 		}
 
+	}
+
+	private class PublishAllTask extends AsyncTask<Void, Void, Boolean> {
+	
+		ProgressDialog dialog;
+		Context mContext;
+	
+		/**
+		 * 
+		 */
+		public PublishAllTask(Context context) {
+			this.mContext = context;
+			dialog = new ProgressDialog(mContext);
+			dialog.setTitle(R.string.loading);
+		}
+	
+		@Override
+		protected void onPreExecute() {
+			dialog.show();
+		}
+	
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			try {
+				SAMoApp.getService().publishAllAssessments(assessments);
+				return true;
+			} catch (SamoServiceException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+	
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (dialog.isShowing()) dialog.dismiss();
+			if (result) {
+				for (Assessment assessment : assessments) {
+					dataSource.markAssessmentAsUploaded(assessment.getId());					
+				}
+				Toast.makeText(mContext, R.string.toast_assmnt_uploaded, Toast.LENGTH_SHORT).show();
+			} else
+				Toast.makeText(mContext, R.string.toast_error_cannot_connect, Toast.LENGTH_SHORT).show();
+		}
+	
 	}
 
 	private class DeleteAssessmentTask extends AsyncTask<Void, Void, Boolean> {
