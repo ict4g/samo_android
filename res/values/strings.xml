@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="about_to_delete_all">"You are about to delete all the assessments"</string>    
+    <string name="about_to_dump_db">"You are about to dump a copy of the database"</string>
     <string name="about_to_use">"You are about to use "</string>
     <string name="about_to_upload_all">"You are about to upload all the assessments"</string>
-    <string name="about_to_delete_all">"You are about to delete all the assessments"</string>
     <string name="app_name">SAMo</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="assessments">Assessments</string>
@@ -38,6 +39,7 @@
     <string name="populating_db">Populating DB&#8230;</string>
     <string name="plus">+</string>
     <string name="save">Save</string>
+    <string name="save_db">Save a copy of the database</string>
     <string name="saving_assessment">Saving Assessment&#8230;</string>
     <string name="sel_campaign">Select Campaign</string>
     <string name="starting_date">Starting date</string>
@@ -46,7 +48,9 @@
     <string name="toast_all_assmnts_deleted ">All assessments deleted!</string>
     <string name="toast_assmnt_deleted ">Assessment deleted!</string>
     <string name="toast_assmnt_uploaded ">Assessment uploaded!</string>
+    <string name="toast_db_saved_in">"Database saved in "</string>
     <string name="toast_error_cannot_connect">Cannot connect to the server</string>
+    <string name="toast_error_db_saved">ERROR: Database cannot be saved</string>
     <string name="upload">Upload</string>
     <string name="upload_all">Upload all</string>
     <string name="upload_assmnt">Upload assessment</string>

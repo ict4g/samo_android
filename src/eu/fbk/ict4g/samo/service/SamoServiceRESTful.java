@@ -1,6 +1,5 @@
 package eu.fbk.ict4g.samo.service;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +11,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.util.Log;
+import eu.fbk.ict4g.samo.activities.SAMoApp;
 import eu.fbk.ict4g.samo.models.Assessment;
 import eu.fbk.ict4g.samo.models.Campaign;
 import eu.fbk.ict4g.samo.models.Indicator;
@@ -19,9 +19,6 @@ import eu.fbk.ict4g.samo.models.Target;
 import eu.fbk.ict4g.samo.utils.SAMoConsts;
 
 public class SamoServiceRESTful implements SamoServiceIF {
-	
-	private SimpleDateFormat dateFormat;
-	private SimpleDateFormat timeformat;
 
 	private String serverUrl;
 	private HTTPUtils serviceInvoker;
@@ -30,10 +27,8 @@ public class SamoServiceRESTful implements SamoServiceIF {
 	private static final String ASSESSMENTS_JSON = "/assessments.json";
 	private static final String CAMPAIGNS = "/campaigns";
 	private static final String CAMPAIGNS_JSON = "/campaigns.json";
-	private static final String NEW = "/new.json";
-	private static final String TARGETS = "/targets";
-	private static final String LOGIN = "/user_sessions";
-	private static final String LOGIN_JSON = "/user_sessions.json";
+	private static final String LOGIN = "/user_sessions/new";
+	private static final String LOGOUT = "/logout";
 	
 	/**
 	 * 
@@ -41,8 +36,6 @@ public class SamoServiceRESTful implements SamoServiceIF {
 	public SamoServiceRESTful(Context context, String serverUrl) {
 		this.serverUrl = serverUrl;
 		serviceInvoker = new HTTPUtils(context);
-		dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		timeformat = new SimpleDateFormat("hh:mm:ss");
 		
 	}
 
@@ -61,7 +54,7 @@ public class SamoServiceRESTful implements SamoServiceIF {
 			for (int i = 0; i < jsonArray.length(); i++) {
 				JSONObject jsonCampaign = jsonArray.getJSONObject(i);
 				Campaign campaign = new Campaign();
-				campaign.setId(jsonCampaign.optLong(SAMoConsts.id));
+				campaign.setRemId(jsonCampaign.optLong(SAMoConsts.id));
 				campaign.setTitle(jsonCampaign.optString(SAMoConsts.title));
 				campaign.setDescription(jsonCampaign.optString(SAMoConsts.description));
 				campaign.setDateFrom(jsonCampaign.optString(SAMoConsts.dateFrom));
@@ -119,15 +112,25 @@ public class SamoServiceRESTful implements SamoServiceIF {
 		nameValuePairs.add(new BasicNameValuePair("user_sessions[email]", username));
 		nameValuePairs.add(new BasicNameValuePair("user_sessions[password]", password));
 //		serviceInvoker.sendHTTPRequest(serverUrl + LOGIN + "/", HTTPUtils.METHOD_POST, nameValuePairs, false);
-		JSONObject jsonObject =  new JSONObject();
-		try {
-			jsonObject.put("user_sessions[email]", username);
-			jsonObject.put("user_sessions[password]", password);
-			serviceInvoker.sendHTTPRequestPOST(serverUrl + LOGIN_JSON, jsonObject);
-		} catch (JSONException e) {
-			e.printStackTrace();
-			throw new SamoServiceException(e);
-		}
+		serviceInvoker.auth(serverUrl + LOGIN);
+//		JSONObject jsonObject =  new JSONObject();
+//		try {
+//			jsonObject.put("user_sessions[email]", username);
+//			jsonObject.put("user_sessions[password]", password);
+//			serviceInvoker.sendHTTPRequestPOST(serverUrl + LOGIN_JSON, jsonObject);
+//		} catch (JSONException e) {
+//			e.printStackTrace();
+//			throw new SamoServiceException(e);
+//		}
+	}
+
+	@Override
+	public void logout() throws SamoServiceException {
+		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+//		serviceInvoker.auth(serverUrl + LOGOUT);
+		serviceInvoker.sendHTTPRequest(serverUrl + LOGOUT, HTTPUtils.METHOD_GET, nameValuePairs, false);
+		serviceInvoker.clearCache();
+		
 	}
 
 	@Override
@@ -146,7 +149,8 @@ public class SamoServiceRESTful implements SamoServiceIF {
 			e.printStackTrace();
 			throw new SamoServiceException(e);
 		}
-		serviceInvoker.sendHTTPRequestPOST(serverUrl + CAMPAIGNS + "/1" + ASSESSMENTS + "/batch_create.json", jsonObject);
+		// TODO manage campaignId
+		serviceInvoker.sendHTTPRequestPOST(serverUrl + CAMPAIGNS + "/" + SAMoApp.getCurrentCampaign().getRemId() + ASSESSMENTS + "/batch_create.json", jsonObject);
 		
 	}
 
@@ -160,7 +164,7 @@ public class SamoServiceRESTful implements SamoServiceIF {
 			else
 				jsonObject.put("assessment", assessmentToJsonObject(assessment));
 			Log.d("jsonAssessment", jsonObject.toString());
-			serviceInvoker.sendHTTPRequestPOST(serverUrl + CAMPAIGNS + "/1" + ASSESSMENTS_JSON, jsonObject);
+			serviceInvoker.sendHTTPRequestPOST(serverUrl + CAMPAIGNS + "/" + assessment.getCampaignId() + ASSESSMENTS_JSON, jsonObject);
 		} catch (JSONException e) {
 			e.printStackTrace();
 			throw new SamoServiceException(e);

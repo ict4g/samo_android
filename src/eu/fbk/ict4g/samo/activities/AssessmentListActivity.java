@@ -241,6 +241,8 @@ public class AssessmentListActivity extends ListActivity {
 			if (dialog.isShowing()) dialog.dismiss();
 			if (result) {
 				dataSource.markAssessmentAsUploaded(selectedAssessment.getId());
+				selectedAssessment.setUploaded(true);
+				assessmentAdapter.notifyDataSetChanged();
 				Toast.makeText(mContext, R.string.toast_assmnt_uploaded, Toast.LENGTH_SHORT).show();
 			} else
 				Toast.makeText(mContext, R.string.toast_error_cannot_connect, Toast.LENGTH_SHORT).show();
@@ -283,8 +285,10 @@ public class AssessmentListActivity extends ListActivity {
 			if (dialog.isShowing()) dialog.dismiss();
 			if (result) {
 				for (Assessment assessment : assessments) {
-					dataSource.markAssessmentAsUploaded(assessment.getId());					
+					dataSource.markAssessmentAsUploaded(assessment.getId());
+					assessment.setUploaded(true);
 				}
+				assessmentAdapter.notifyDataSetChanged();
 				Toast.makeText(mContext, R.string.toast_assmnt_uploaded, Toast.LENGTH_SHORT).show();
 			} else
 				Toast.makeText(mContext, R.string.toast_error_cannot_connect, Toast.LENGTH_SHORT).show();

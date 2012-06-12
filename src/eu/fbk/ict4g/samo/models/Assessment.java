@@ -10,6 +10,7 @@ public class Assessment implements Parcelable {
 
 	private long id;
 	private long assessorId;
+	private long campaignId;
 	private long targetId;
 	
 	private boolean uploaded;
@@ -72,6 +73,14 @@ public class Assessment implements Parcelable {
 		this.assessorId = assessorId;
 	}
 
+	public long getCampaignId() {
+		return campaignId;
+	}
+
+	public void setCampaignId(long campaignId) {
+		this.campaignId = campaignId;
+	}
+
 	public long getTargetId() {
 		return targetId;
 	}
@@ -123,6 +132,7 @@ public class Assessment implements Parcelable {
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeLong(id);
 		dest.writeLong(assessorId);
+		dest.writeLong(campaignId);
 		dest.writeLong(targetId);
 		dest.writeInt(uploaded ? 1 : 0);
 		dest.writeString(name);
@@ -148,6 +158,7 @@ public class Assessment implements Parcelable {
 	public Assessment(Parcel in) {
 		id = in.readLong();
 		assessorId = in.readLong();
+		campaignId = in.readLong();
 		targetId = in.readLong();
 		uploaded = in.readInt() == 1 ? true : false;
 		name = in.readString();

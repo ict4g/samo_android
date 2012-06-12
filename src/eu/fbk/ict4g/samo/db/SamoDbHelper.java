@@ -12,6 +12,7 @@ public class SamoDbHelper extends SQLiteOpenHelper {
 	public static final String TABLE_INDICATORS = "indicator";
 	public static final String TABLE_TARGETS = "target";
 	public static final String COLUMN_ASSESSOR_ID = "user";
+	public static final String COLUMN_CAMPAIGN_ID = "campaign_id";
 	public static final String COLUMN_DATE = "date";
 	public static final String COLUMN_DATE_FROM = "campaign_date_from";
 	public static final String COLUMN_DATE_TO = "campaign_date_to";
@@ -26,7 +27,7 @@ public class SamoDbHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_TYPE = "indicator_type";
 	public static final String COLUMN_UPLOADED = "uploaded";
 
-	private static final String DATABASE_NAME = "samo.db";
+	public static final String DATABASE_NAME = "samo.db";
 	private static final int DATABASE_VERSION = 1;
 
 	// Database creation sql statement
@@ -35,6 +36,7 @@ public class SamoDbHelper extends SQLiteOpenHelper {
 			+ COLUMN_ID + " integer primary key autoincrement, " // 0
 			+ COLUMN_NAME + " text not null, " // 1
 			+ COLUMN_ASSESSOR_ID + " integer, " // 2
+			+ COLUMN_CAMPAIGN_ID + " integer, " // 2
 			+ COLUMN_TARGET_ID + " integer, " // 3
 			+ COLUMN_TARGET_NAME + " text, " // 4
 			+ COLUMN_UPLOADED + " integer, " // 5
@@ -69,7 +71,7 @@ public class SamoDbHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL(TABLE_ASSESSMENTS_CREATE);
-		// TODO db.execSQL(TABLE_CAMPAIGNS_CREATE);
+		db.execSQL(TABLE_CAMPAIGNS_CREATE);
 		db.execSQL(TABLE_INDICATORS_CREATE);
 		db.execSQL(TABLE_TARGETS_CREATE);
 	}
@@ -80,7 +82,7 @@ public class SamoDbHelper extends SQLiteOpenHelper {
 				"Upgrading database from version " + oldVersion + " to "
 						+ newVersion + ", which will destroy all old data");
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_ASSESSMENTS);
-		// TODO db.execSQL("DROP TABLE IF EXISTS " + TABLE_CAMPAIGNS);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_CAMPAIGNS);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_INDICATORS);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_TARGETS);
 		onCreate(db);

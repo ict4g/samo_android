@@ -1,6 +1,12 @@
 package eu.fbk.ict4g.samo.db;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -8,13 +14,18 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 import android.util.Log;
+import eu.fbk.ict4g.samo.activities.SAMoApp;
 import eu.fbk.ict4g.samo.models.Assessment;
+import eu.fbk.ict4g.samo.models.Campaign;
 import eu.fbk.ict4g.samo.models.Indicator;
 import eu.fbk.ict4g.samo.models.Target;
 
 public class SamoDbDataSource {
 
+	private SimpleDateFormat dateFormat;
+	
 	// Database fields
 	private SQLiteDatabase database;
 	private SamoDbHelper dbHelper;
@@ -28,6 +39,7 @@ public class SamoDbDataSource {
 	public SamoDbDataSource(Context context) {
 		
 		if (dbHelper == null) dbHelper =  new SamoDbHelper(context);
+		dateFormat = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
 	}
 
 	public void open() throws SQLException {
@@ -62,7 +74,7 @@ public class SamoDbDataSource {
 		database.execSQL("ALTER TABLE " + SamoDbHelper.TABLE_TARGETS + " ADD " + target.getName() + " text not null");
 	}
 
-	public void createAssessment(Assessment assessment) {
+	public synchronized void createAssessment(Assessment assessment) {
 
 		Cursor c = database.query(SamoDbHelper.TABLE_ASSESSMENTS,
 				null, null, null, null, null, null);
@@ -73,6 +85,7 @@ public class SamoDbDataSource {
 		ContentValues values = new ContentValues();
 		values.put(SamoDbHelper.COLUMN_NAME, assessment.getName());
 		values.put(SamoDbHelper.COLUMN_ASSESSOR_ID, assessment.getAssessorId());
+		values.put(SamoDbHelper.COLUMN_CAMPAIGN_ID, assessment.getCampaignId());
 		values.put(SamoDbHelper.COLUMN_TARGET_ID, assessment.getTargetId());
 		values.put(SamoDbHelper.COLUMN_TARGET_NAME, assessment.getTargetName());
 		values.put(SamoDbHelper.COLUMN_UPLOADED, assessment.isUploaded() ? 1 : 0);
@@ -97,6 +110,25 @@ public class SamoDbDataSource {
 		}
 		cursor.close();
 		//return newAssessment;
+	}
+	
+	public synchronized Campaign createCampaign(Campaign campaign) {
+		ContentValues values = new ContentValues();
+		values.put(SamoDbHelper.COLUMN_TITLE, campaign.getTitle());
+		values.put(SamoDbHelper.COLUMN_DESCRIPTION, campaign.getDescription());
+		values.put(SamoDbHelper.COLUMN_DATE_FROM, campaign.getDateFrom());
+		values.put(SamoDbHelper.COLUMN_DATE_TO, campaign.getDateTo());
+		values.put(SamoDbHelper.COLUMN_REMOTE_ID, campaign.getRemId());
+		long insertId = database.insert(SamoDbHelper.TABLE_CAMPAIGNS, null,
+				values);
+		Cursor cursor = database.query(SamoDbHelper.TABLE_CAMPAIGNS,
+				null, SamoDbHelper.COLUMN_ID + " = " + insertId, null,
+				null, null, null);
+		cursor.moveToFirst();
+		Campaign newCampaign = cursorToCampaign(cursor);
+		cursor.close();
+		return newCampaign;
+		
 	}
 
 	public synchronized Indicator createIndicator(Indicator indicator) {
@@ -200,6 +232,26 @@ public class SamoDbDataSource {
 		cursor.close();
 		return assessments;
 	}
+	
+	public List<Campaign> getAllCampaigns() {
+		List<Campaign> campaigns = new ArrayList<Campaign>();
+		Cursor cursor = database.query(SamoDbHelper.TABLE_CAMPAIGNS,
+				null, null, null, null, null, null);
+
+		cursor.moveToFirst();
+
+		Log.d(this.getClass().getSimpleName() + ".getAllCampaigns()", "there are " + cursor.getCount() + " campaigns rows");
+		while (!cursor.isAfterLast()) {
+			Log.d("cursor", cursor.toString());
+			Campaign campaign = cursorToCampaign(cursor);
+			campaigns.add(campaign);
+			cursor.moveToNext();
+		}
+		// Make sure to close the cursor
+		cursor.close();
+		
+		return campaigns;
+	}
 
 	public List<Indicator> getAllIndicators() {
 		List<Indicator> indicators = new ArrayList<Indicator>();
@@ -269,8 +321,8 @@ public class SamoDbDataSource {
 		database.execSQL(SamoDbHelper.TABLE_INDICATORS_CREATE);
 		database.execSQL("DROP TABLE IF EXISTS " + SamoDbHelper.TABLE_TARGETS);
 		database.execSQL(SamoDbHelper.TABLE_TARGETS_CREATE);
-		// TODO database.execSQL("DROP TABLE IF EXISTS " + SamoDbHelper.TABLE_CAMPAIGNS);
-		// TODO database.execSQL(SamoDbHelper.TABLE_CAMPAIGNS_CREATE);
+		database.execSQL("DROP TABLE IF EXISTS " + SamoDbHelper.TABLE_CAMPAIGNS);
+		database.execSQL(SamoDbHelper.TABLE_CAMPAIGNS_CREATE);
 		resetAssessmentsTable();
 		
 	}
@@ -280,11 +332,42 @@ public class SamoDbDataSource {
 		database.execSQL(SamoDbHelper.TABLE_ASSESSMENTS_CREATE);
 	}
 	
+	public String dumpDatabase() {
+		String result = null;
+		try {	
+			Log.w(this.getClass().getSimpleName(), "trying to dump the db...");
+	        File sd = Environment.getExternalStorageDirectory();
+	        
+	        if (sd.canWrite()) {
+	        	String timeStamp = dateFormat.format(Calendar.getInstance().getTime());
+	            String backupDBPath = SamoDbHelper.DATABASE_NAME + "_" + timeStamp;
+	            File currentDB = SAMoApp.getDatabasePath();
+	            File backupDB = new File(sd, backupDBPath);
+	            
+	            if (currentDB.exists()) {
+	                FileChannel src = new FileInputStream(currentDB).getChannel();
+	                FileChannel dst = new FileOutputStream(backupDB).getChannel();
+	                dst.transferFrom(src, 0, src.size());
+	                src.close();
+	                dst.close();
+	                result = backupDB.getAbsolutePath();
+	                Log.w(this.getClass().getSimpleName(), "db saved in " + backupDB.getAbsolutePath());
+	            } else
+	            	Log.w(this.getClass().getSimpleName(), "currentDB.exists() false");
+	        } else
+	        	Log.w(this.getClass().getSimpleName(), "sd.canWrite() false");
+	    } catch (Exception e) {
+	    	e.printStackTrace();
+	    }
+		return result;
+	}
+	
 	private Assessment cursorToAssessment(Cursor cursor) {
 		Assessment assessment = new Assessment();
 		assessment.setId(cursor.getLong(cursor.getColumnIndex(SamoDbHelper.COLUMN_ID)));
 		assessment.setName(cursor.getString(cursor.getColumnIndex(SamoDbHelper.COLUMN_NAME)));
 		assessment.setAssessorId(cursor.getLong(cursor.getColumnIndex(SamoDbHelper.COLUMN_ASSESSOR_ID)));
+		assessment.setCampaignId(cursor.getLong(cursor.getColumnIndex(SamoDbHelper.COLUMN_CAMPAIGN_ID)));
 		assessment.setTargetId(cursor.getLong(cursor.getColumnIndex(SamoDbHelper.COLUMN_TARGET_ID)));
 		assessment.setTargetName(cursor.getString(cursor.getColumnIndex(SamoDbHelper.COLUMN_TARGET_NAME)));
 		assessment.setUploaded(cursor.getInt(cursor.getColumnIndex(SamoDbHelper.COLUMN_UPLOADED)) == 1 ? true : false);
@@ -301,6 +384,17 @@ public class SamoDbDataSource {
 			assessment.addIndicator(indicator);
 		}
 		return assessment;
+	}
+	
+	private Campaign cursorToCampaign(Cursor cursor) {
+		Campaign campaign = new Campaign();
+		campaign.setId(cursor.getLong(cursor.getColumnIndex(SamoDbHelper.COLUMN_ID)));
+		campaign.setRemId(cursor.getLong(cursor.getColumnIndex(SamoDbHelper.COLUMN_REMOTE_ID)));
+		campaign.setDescription(cursor.getString(cursor.getColumnIndex(SamoDbHelper.COLUMN_DESCRIPTION)));
+		campaign.setDateFrom(cursor.getString(cursor.getColumnIndex(SamoDbHelper.COLUMN_DATE_FROM)));
+		campaign.setDateTo(cursor.getString(cursor.getColumnIndex(SamoDbHelper.COLUMN_DATE_TO)));
+		campaign.setTitle(cursor.getString(cursor.getColumnIndex(SamoDbHelper.COLUMN_TITLE)));
+		return campaign;
 	}
 
 	private Indicator cursorToIndicator(Cursor cursor) {

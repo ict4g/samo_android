@@ -128,20 +128,6 @@
     </TableLayout>
 
     <Button
-        android:id="@+id/indicatorsButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onClick"
-        android:text="indicators" />
-
-    <Button
-        android:id="@+id/targetsButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onClick"
-        android:text="targets" />
-
-    <Button
         android:id="@+id/publishButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -154,5 +140,12 @@
         android:layout_height="wrap_content"
         android:onClick="onClick"
         android:text="login" />
+
+    <Button
+        android:id="@+id/logoutButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onClick"
+        android:text="logout" />
 
 </LinearLayout>

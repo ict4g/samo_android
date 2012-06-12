@@ -102,7 +102,10 @@ public class CampaignsActivity extends Activity {
 
 		// Populate tables
 		// campaign
-		// TODO add an entry to the campaign table
+		// add an entry to the campaign table
+		Log.d("campaign", campaign.getTitle());
+		dataSource.createCampaign(campaign);
+		SAMoApp.setCurrentCampaign(campaign);
 		
 		// assessment and indicator
 		for (Indicator indicator : campaign.getIndicators()) {

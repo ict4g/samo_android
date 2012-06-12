@@ -6,6 +6,7 @@ import java.util.List;
 public class Campaign {
 	
 	private long id;
+	private long remId;
 	
 	private String title;
 	private String description;
@@ -34,6 +35,14 @@ public class Campaign {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public long getRemId() {
+		return remId;
+	}
+
+	public void setRemId(long remId) {
+		this.remId = remId;
 	}
 
 	public List<Assessment> getAssessments() {

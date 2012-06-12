@@ -139,7 +139,6 @@ public class NewAssessmentActivity extends Activity {
 
 			@Override
 			public void onNothingSelected(AdapterView<?> parent) {
-				// TODO Auto-generated method stub
 
 			}
 		});
@@ -191,6 +190,8 @@ public class NewAssessmentActivity extends Activity {
 		newAssessment.setTargetId(selectedTarget.getId());
 		newAssessment.setTargetName(selectedTarget.getName());
 		newAssessment.setAssessorId(1); // TODO get it from somewhere
+		newAssessment.setAssessorName("Assessor"); // TODO get it from somewhere
+		newAssessment.setCampaignId(SAMoApp.getCurrentCampaign().getRemId());
 
 		// date stuff
 		Calendar now = Calendar.getInstance();
