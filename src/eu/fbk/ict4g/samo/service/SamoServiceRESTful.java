@@ -27,8 +27,9 @@ public class SamoServiceRESTful implements SamoServiceIF {
 	private static final String ASSESSMENTS_JSON = "/assessments.json";
 	private static final String CAMPAIGNS = "/campaigns";
 	private static final String CAMPAIGNS_JSON = "/campaigns.json";
-	private static final String LOGIN = "/user_sessions/new";
-	private static final String LOGOUT = "/logout";
+	private static final String LOGIN = "/user_sessions";
+	private static final String LOGIN_JSON = "/user_sessions.json";
+	private static final String LOGOUT = "/logout.json";
 	
 	/**
 	 * 
@@ -111,24 +112,27 @@ public class SamoServiceRESTful implements SamoServiceIF {
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 		nameValuePairs.add(new BasicNameValuePair("user_sessions[email]", username));
 		nameValuePairs.add(new BasicNameValuePair("user_sessions[password]", password));
-//		serviceInvoker.sendHTTPRequest(serverUrl + LOGIN + "/", HTTPUtils.METHOD_POST, nameValuePairs, false);
-		serviceInvoker.auth(serverUrl + LOGIN);
-//		JSONObject jsonObject =  new JSONObject();
-//		try {
-//			jsonObject.put("user_sessions[email]", username);
-//			jsonObject.put("user_sessions[password]", password);
-//			serviceInvoker.sendHTTPRequestPOST(serverUrl + LOGIN_JSON, jsonObject);
-//		} catch (JSONException e) {
-//			e.printStackTrace();
-//			throw new SamoServiceException(e);
-//		}
+//		serviceInvoker.sendHTTPRequest(serverUrl + LOGIN, HTTPUtils.METHOD_POST, nameValuePairs, false);
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put("email", username);
+			jsonObject.put("password", password);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		serviceInvoker.sendHTTPRequestPOST(serverUrl + LOGIN_JSON, jsonObject);
+//		serviceInvoker.auth(serverUrl + LOGIN);
+		
+//		serviceInvoker.connAuth(serverUrl + LOGIN);
+
 	}
 
 	@Override
 	public void logout() throws SamoServiceException {
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 //		serviceInvoker.auth(serverUrl + LOGOUT);
-		serviceInvoker.sendHTTPRequest(serverUrl + LOGOUT, HTTPUtils.METHOD_GET, nameValuePairs, false);
+		serviceInvoker.sendHTTPRequest(serverUrl + LOGOUT, HTTPUtils.METHOD_DELETE, nameValuePairs, false);
 		serviceInvoker.clearCache();
 		
 	}

@@ -147,7 +147,7 @@ public class SAMoActivity extends Activity {
 		@Override
 		protected Boolean doInBackground(Void... params) {
 			try {
-				SAMoApp.getService().login("manager@gmail.com", "12345");
+				SAMoApp.getService().login("pbmolini@fbk.eu", "12345");
 				return true;
 			} catch (SamoServiceException e) {
 				e.printStackTrace();
