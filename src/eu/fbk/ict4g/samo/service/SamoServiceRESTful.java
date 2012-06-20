@@ -22,7 +22,7 @@ public class SamoServiceRESTful implements SamoServiceIF {
 
 	private String serverUrl;
 	private HTTPUtils serviceInvoker;
-	
+
 	private static final String ASSESSMENTS = "/assessments";
 	private static final String ASSESSMENTS_JSON = "/assessments.json";
 	private static final String CAMPAIGNS = "/campaigns";
@@ -30,14 +30,14 @@ public class SamoServiceRESTful implements SamoServiceIF {
 	private static final String LOGIN = "/user_sessions";
 	private static final String LOGIN_JSON = "/user_sessions.json";
 	private static final String LOGOUT = "/logout.json";
-	
+
 	/**
 	 * 
 	 */
 	public SamoServiceRESTful(Context context, String serverUrl) {
 		this.serverUrl = serverUrl;
 		serviceInvoker = new HTTPUtils(context);
-		
+
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class SamoServiceRESTful implements SamoServiceIF {
 				campaign.setDescription(jsonCampaign.optString(SAMoConsts.description));
 				campaign.setDateFrom(jsonCampaign.optString(SAMoConsts.dateFrom));
 				campaign.setDateTo(jsonCampaign.optString(SAMoConsts.dateTo));
-				
+
 				// extract targets from json and build a temporary list of targets
 				JSONArray jsonTargets = jsonCampaign.getJSONArray(SAMoConsts.targets);
 				ArrayList<Target> tmpTargets =  new ArrayList<Target>();
@@ -69,7 +69,7 @@ public class SamoServiceRESTful implements SamoServiceIF {
 				}				
 				// put targets in campaign
 				campaign.setTargets(tmpTargets);
-				
+
 				// extract indicators from json and build a temporary list of indicators
 				JSONArray jsonIndicators = jsonCampaign.getJSONArray(SAMoConsts.indicators);
 				ArrayList<Indicator> tmpIndicators = new ArrayList<Indicator>();
@@ -78,7 +78,7 @@ public class SamoServiceRESTful implements SamoServiceIF {
 				}
 				//put indicators in campaigns
 				campaign.setIndicators(tmpIndicators);
-				
+
 				campaigns.add(campaign);
 			}
 		} catch (JSONException e) {
@@ -112,7 +112,7 @@ public class SamoServiceRESTful implements SamoServiceIF {
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 		nameValuePairs.add(new BasicNameValuePair("user_sessions[email]", username));
 		nameValuePairs.add(new BasicNameValuePair("user_sessions[password]", password));
-//		serviceInvoker.sendHTTPRequest(serverUrl + LOGIN, HTTPUtils.METHOD_POST, nameValuePairs, false);
+		//		serviceInvoker.sendHTTPRequest(serverUrl + LOGIN, HTTPUtils.METHOD_POST, nameValuePairs, false);
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject.put("email", username);
@@ -120,31 +120,44 @@ public class SamoServiceRESTful implements SamoServiceIF {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		
-		serviceInvoker.sendHTTPRequestPOST(serverUrl + LOGIN_JSON, jsonObject);
-//		serviceInvoker.auth(serverUrl + LOGIN);
-		
-//		serviceInvoker.connAuth(serverUrl + LOGIN);
+
+		JSONObject jsonResp = serviceInvoker.sendHTTPRequestPOST(serverUrl + LOGIN_JSON, jsonObject);
+		if (jsonResp != null) {
+			if (jsonResp.optBoolean(SAMoConsts.success)) {
+				JSONObject sessionIdJson = jsonResp.optJSONObject(SAMoConsts.sessionId);
+				if (sessionIdJson != null) {
+					JSONObject attemptedRecordJson = sessionIdJson.optJSONObject(SAMoConsts.attemptedRecord);
+					if (attemptedRecordJson != null) {
+						Log.d(this.getClass().getSimpleName(), "User id: " + attemptedRecordJson.optLong(SAMoConsts.id) + "; User name: " + attemptedRecordJson.optString(SAMoConsts.name));
+						SAMoApp.setUserId(attemptedRecordJson.optLong(SAMoConsts.id));
+						SAMoApp.setUserName(attemptedRecordJson.optString(SAMoConsts.name));
+					}
+				}
+			}
+		}
 
 	}
 
 	@Override
 	public void logout() throws SamoServiceException {
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-//		serviceInvoker.auth(serverUrl + LOGOUT);
+		//		serviceInvoker.auth(serverUrl + LOGOUT);
 		serviceInvoker.sendHTTPRequest(serverUrl + LOGOUT, HTTPUtils.METHOD_DELETE, nameValuePairs, false);
 		serviceInvoker.clearCache();
-		
+
 	}
 
 	@Override
 	public void publishAllAssessments(List<Assessment> assessments) throws SamoServiceException {
 		JSONObject jsonObject =  new JSONObject();
 		JSONArray jsonArray =  new JSONArray();
-//		for (int i = 0; i < 5; i++) {
-//			jsonArray.put(createJsonAssessment());
-//		}
+		//		for (int i = 0; i < 5; i++) {
+		//			jsonArray.put(createJsonAssessment());
+		//		}
 		for (Assessment assessment : assessments) {
+			// put the correct assessorName and assessorId
+			assessment.setAssessorId(SAMoApp.getUserId());
+			assessment.setAssessorName(SAMoApp.getUserName());
 			jsonArray.put(assessmentToJsonObject(assessment));
 		}
 		try {
@@ -153,64 +166,83 @@ public class SamoServiceRESTful implements SamoServiceIF {
 			e.printStackTrace();
 			throw new SamoServiceException(e);
 		}
-		// TODO manage campaignId
-		serviceInvoker.sendHTTPRequestPOST(serverUrl + CAMPAIGNS + "/" + SAMoApp.getCurrentCampaign().getRemId() + ASSESSMENTS + "/batch_create.json", jsonObject);
-		
+		JSONObject jsonResp = serviceInvoker.sendHTTPRequestPOST(serverUrl + CAMPAIGNS + "/" + SAMoApp.getCurrentCampaign().getRemId() + ASSESSMENTS + "/batch_create.json", jsonObject);
+		if (jsonResp != null) {
+			if (!jsonResp.optBoolean(SAMoConsts.success)) { // success false
+				throw new SamoServiceException(jsonResp.optString(SAMoConsts.message));
+			}
+				
+		}
 	}
 
 	@Override
 	public void publishAssessment(Assessment assessment) throws SamoServiceException {
 		try {
-			
+
 			JSONObject jsonObject =  new JSONObject();
 			if (assessment == null) 
 				jsonObject.put("assessment", createJsonAssessment());
-			else
+			else {
+				// put the correct assessorName and assessorId
+				assessment.setAssessorId(SAMoApp.getUserId());
+				assessment.setAssessorName(SAMoApp.getUserName());
 				jsonObject.put("assessment", assessmentToJsonObject(assessment));
+			}
 			Log.d("jsonAssessment", jsonObject.toString());
-			serviceInvoker.sendHTTPRequestPOST(serverUrl + CAMPAIGNS + "/" + assessment.getCampaignId() + ASSESSMENTS_JSON, jsonObject);
+			JSONObject jsonResp = serviceInvoker.sendHTTPRequestPOST(serverUrl + CAMPAIGNS + "/" + assessment.getCampaignId() + ASSESSMENTS_JSON, jsonObject);
+			if (jsonResp != null) {
+				if (!jsonResp.optBoolean(SAMoConsts.success)) { // success false
+					throw new SamoServiceException(jsonResp.optString(SAMoConsts.message));
+				}
+					
+			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 			throw new SamoServiceException(e);
 		}
-		
+
 
 	}
-	
+
 	private JSONObject assessmentToJsonObject (Assessment assessment) {
 		JSONObject jsonAssessment = new JSONObject();
 		try {
 			jsonAssessment.put("target_id", assessment.getTargetId());
 			jsonAssessment.put("user_id", assessment.getAssessorId());
 			jsonAssessment.put("date", assessment.getDate());
+			jsonAssessment.put("name", assessment.getName());
 			jsonAssessment.put("finalized", true);
-			
+
 			JSONObject jsonIndicator; // reusable JSONObject
 			JSONArray jsonArray = new JSONArray();
-			
+
 			for (Indicator indicator : assessment.getIndicators()) {
 				jsonIndicator =  new JSONObject();
 				jsonIndicator.put("indicator_id", indicator.getId());
-				jsonIndicator.put("value", indicator.getValue());
+
+				if (indicator.getType().equalsIgnoreCase(Indicator.TYPE_YESNO))
+					jsonIndicator.put("value", indicator.getValue().equalsIgnoreCase("1") ? "Yes" : "No");
+				else
+					jsonIndicator.put("value", indicator.getValue());
 				jsonArray.put(jsonIndicator);
 			}
-			
-//			JSONObject jsonObjectArray = new JSONObject();
-//			for (int i = 1; i <= 3; i++) {
-//				jsonIndicator =  new JSONObject();
-//				jsonIndicator.put("indicator_id", i);
-//				jsonIndicator.put("value", i+100);
-//				jsonObjectArray.put("" + (i-1), jsonIndicator);				
-//			}
+
+			//			JSONObject jsonObjectArray = new JSONObject();
+			//			for (int i = 1; i <= 3; i++) {
+			//				jsonIndicator =  new JSONObject();
+			//				jsonIndicator.put("indicator_id", i);
+			//				jsonIndicator.put("value", i+100);
+			//				jsonObjectArray.put("" + (i-1), jsonIndicator);				
+			//			}
 			jsonAssessment.put("answers", jsonArray);
-			
+
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		return jsonAssessment;
-		
+
 	}
-	
+
 	private JSONObject createJsonAssessment() {
 		JSONObject jsonAssessment = new JSONObject();
 		try {
@@ -226,16 +258,16 @@ public class SamoServiceRESTful implements SamoServiceIF {
 				jsonIndicator.put("value", i+100);
 				jsonArray.put(jsonIndicator);				
 			}
-			
-//			JSONObject jsonObjectArray = new JSONObject();
-//			for (int i = 1; i <= 3; i++) {
-//				jsonIndicator =  new JSONObject();
-//				jsonIndicator.put("indicator_id", i);
-//				jsonIndicator.put("value", i+100);
-//				jsonObjectArray.put("" + (i-1), jsonIndicator);				
-//			}
+
+			//			JSONObject jsonObjectArray = new JSONObject();
+			//			for (int i = 1; i <= 3; i++) {
+			//				jsonIndicator =  new JSONObject();
+			//				jsonIndicator.put("indicator_id", i);
+			//				jsonIndicator.put("value", i+100);
+			//				jsonObjectArray.put("" + (i-1), jsonIndicator);				
+			//			}
 			jsonAssessment.put("answers", jsonArray);
-			
+
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -249,7 +281,7 @@ public class SamoServiceRESTful implements SamoServiceIF {
 		indicator.setValue(jsonObject.optString(SAMoConsts.value));
 		return indicator;
 	}
-	
+
 	private Target jsonObjToTarget (JSONObject jsonObject) {
 		Target target = new Target();
 		target.setId(jsonObject.optLong(SAMoConsts.id));

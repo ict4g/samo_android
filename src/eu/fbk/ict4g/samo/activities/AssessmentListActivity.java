@@ -1,5 +1,6 @@
 package eu.fbk.ict4g.samo.activities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.AlertDialog;
@@ -18,6 +19,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -34,14 +37,34 @@ public class AssessmentListActivity extends ListActivity {
 	AssessmentAdapter assessmentAdapter;
 	List<Assessment> assessments;
 	Assessment selectedAssessment;
+	ImageButton authButton;
+	TextView authTextView;
 
 	private static final int DETAILS_DIALOG = 42;
+	private static final int LOGIN_DIALOG = 43;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.assessment_list);
 		ListView assessmentListView = getListView();
+		authButton =  (ImageButton) findViewById(R.id.authButton);
+		authTextView = (TextView) findViewById(R.id.authTextView);
+		
+		authButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if (SAMoApp.isUserLogged())
+					// logout
+					new LogoutTask(AssessmentListActivity.this).execute();
+				else
+					// login
+					showDialog(LOGIN_DIALOG);
+				
+			}
+		});
 
 		dataSource = new SamoDbDataSource(this);
 		dataSource.open();
@@ -76,6 +99,8 @@ public class AssessmentListActivity extends ListActivity {
 	@Override
 	protected void onResume() {
 		dataSource.open();
+		// here I change the appearence of the authButton accordingly to the current status
+		toggleAuthButton();
 		super.onResume();
 	}
 
@@ -99,9 +124,9 @@ public class AssessmentListActivity extends ListActivity {
 
 	@Override
 	protected Dialog onCreateDialog(int id, Bundle bundle) {
+		LayoutInflater li = LayoutInflater.from(this);
 		switch (id) {
 		case DETAILS_DIALOG:
-			LayoutInflater li = LayoutInflater.from(this);
 			View detailsView = li.inflate(R.layout.assessment_details, null);
 
 			AlertDialog.Builder detailsDialog = new AlertDialog.Builder(this);
@@ -121,6 +146,31 @@ public class AssessmentListActivity extends ListActivity {
 //			dialog.setTitle(R.string.details);
 //			dialog.setCancelable(true);
 //			return dialog;
+			
+		case LOGIN_DIALOG:
+			View loginView = li.inflate(R.layout.login_dialog, null);
+
+			AlertDialog.Builder loginDialog = new AlertDialog.Builder(this);
+//			detailsDialog.setTitle(R.string.details);
+			loginDialog.setView(loginView);
+//			loginDialog.setPositiveButton(R.string.ok, new OnClickListener() {
+//
+//				@Override
+//				public void onClick(DialogInterface dialog, int which) {
+//					new LoginTask(AssessmentListActivity.this);
+//					dialog.cancel();
+//				}
+//			});
+//			loginDialog.setNegativeButton(R.string.close, new OnClickListener() {
+//
+//				@Override
+//				public void onClick(DialogInterface dialog, int which) {
+//					dialog.cancel();
+//				}
+//			});
+			
+			return loginDialog.create();
+			
 		default:
 			break;
 		}
@@ -129,9 +179,9 @@ public class AssessmentListActivity extends ListActivity {
 
 	@Override
 	protected void onPrepareDialog(int id, Dialog dialog, Bundle bundle) {
+		final AlertDialog d = (AlertDialog) dialog;
 		switch (id) {
 		case DETAILS_DIALOG:
-			final AlertDialog d = (AlertDialog) dialog;
 //			final Dialog d = dialog;
 			TextView nameTextView = (TextView) d.findViewById(R.id.nameTextView);
 			TextView dateTextView = (TextView) d.findViewById(R.id.dateTextView);
@@ -167,6 +217,34 @@ public class AssessmentListActivity extends ListActivity {
 			
 			break;
 
+		case LOGIN_DIALOG:
+			d.getWindow().setLayout(600, 400);
+			final EditText emailEditText =  (EditText) d.findViewById(R.id.emailEditText);
+			final EditText passwdEditText =  (EditText) d.findViewById(R.id.passwordEditText);
+			Button loginButton = (Button) d.findViewById(R.id.loginButton);
+			Button cancelButton = (Button) d.findViewById(R.id.cancelButton);
+			
+			loginButton.setOnClickListener(new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					String email = emailEditText.getText().toString();
+					String passwd = passwdEditText.getText().toString();
+					new LoginTask(AssessmentListActivity.this).execute(email, passwd);
+					dismissDialog(LOGIN_DIALOG);
+				}
+			});
+			
+			cancelButton.setOnClickListener(new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					dismissDialog(LOGIN_DIALOG);
+					
+				}
+			});
+			
+			break;
 		default:
 			break;
 		}
@@ -206,10 +284,22 @@ public class AssessmentListActivity extends ListActivity {
 		alert.show();
 	}
 
+	public void toggleAuthButton() {
+		if (SAMoApp.isUserLogged()) {
+			authButton.setImageResource(R.drawable.logout);
+			authTextView.setText(R.string.logout);
+		} else {
+			authButton.setImageResource(R.drawable.login);
+			authTextView.setText(R.string.login);
+		}
+		
+	}
+
 	private class PublishTask extends AsyncTask<Void, Void, Boolean> {
 
 		ProgressDialog dialog;
 		Context mContext;
+		String errMsg;
 
 		/**
 		 * 
@@ -218,6 +308,7 @@ public class AssessmentListActivity extends ListActivity {
 			this.mContext = context;
 			dialog = new ProgressDialog(mContext);
 			dialog.setTitle(R.string.loading);
+			errMsg = "";
 		}
 
 		@Override
@@ -232,6 +323,7 @@ public class AssessmentListActivity extends ListActivity {
 				return true;
 			} catch (SamoServiceException e) {
 				e.printStackTrace();
+				errMsg = e.getMessage();
 				return false;
 			}
 		}
@@ -245,7 +337,7 @@ public class AssessmentListActivity extends ListActivity {
 				assessmentAdapter.notifyDataSetChanged();
 				Toast.makeText(mContext, R.string.toast_assmnt_uploaded, Toast.LENGTH_SHORT).show();
 			} else
-				Toast.makeText(mContext, R.string.toast_error_cannot_connect, Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, errMsg, Toast.LENGTH_SHORT).show();
 		}
 
 	}
@@ -254,6 +346,8 @@ public class AssessmentListActivity extends ListActivity {
 	
 		ProgressDialog dialog;
 		Context mContext;
+		String errMsg;
+		List<Assessment> assmtsToUpload;
 	
 		/**
 		 * 
@@ -262,6 +356,8 @@ public class AssessmentListActivity extends ListActivity {
 			this.mContext = context;
 			dialog = new ProgressDialog(mContext);
 			dialog.setTitle(R.string.loading);
+			errMsg = "";
+			assmtsToUpload = new ArrayList<Assessment>();
 		}
 	
 		@Override
@@ -272,10 +368,22 @@ public class AssessmentListActivity extends ListActivity {
 		@Override
 		protected Boolean doInBackground(Void... params) {
 			try {
-				SAMoApp.getService().publishAllAssessments(assessments);
+				// Publish only unpublished assessments
+				for (Assessment assessment : assessments) {
+					if (!assessment.isUploaded())
+						assmtsToUpload.add(assessment);
+					else
+						Log.d(mContext.getClass().getSimpleName(), "Assessment " + assessment.getName() + " should be uploaded");
+				}
+				if (assmtsToUpload.isEmpty()) {
+					errMsg = getString(R.string.toast_error_nothing_to_upload);
+					return false;
+				} else
+					SAMoApp.getService().publishAllAssessments(assmtsToUpload);
 				return true;
 			} catch (SamoServiceException e) {
 				e.printStackTrace();
+				errMsg = e.getMessage();
 				return false;
 			}
 		}
@@ -284,14 +392,14 @@ public class AssessmentListActivity extends ListActivity {
 		protected void onPostExecute(Boolean result) {
 			if (dialog.isShowing()) dialog.dismiss();
 			if (result) {
-				for (Assessment assessment : assessments) {
+				for (Assessment assessment : assmtsToUpload) {
 					dataSource.markAssessmentAsUploaded(assessment.getId());
 					assessment.setUploaded(true);
 				}
 				assessmentAdapter.notifyDataSetChanged();
 				Toast.makeText(mContext, R.string.toast_assmnt_uploaded, Toast.LENGTH_SHORT).show();
 			} else
-				Toast.makeText(mContext, R.string.toast_error_cannot_connect, Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, errMsg, Toast.LENGTH_SHORT).show();
 		}
 	
 	}
@@ -447,5 +555,88 @@ public class AssessmentListActivity extends ListActivity {
 			return convertView;
 		}
 
+	}
+
+	private class LoginTask extends AsyncTask<String, Void, Boolean> {
+	
+		ProgressDialog dialog;
+		Context mContext;
+	
+		/**
+		 * 
+		 */
+		public LoginTask(Context context) {
+			this.mContext = context;
+			dialog = new ProgressDialog(mContext);
+			dialog.setTitle("Loading");
+		}
+	
+		@Override
+		protected void onPreExecute() {
+			dialog.show();
+		}
+	
+		@Override
+		protected Boolean doInBackground(String... params) {
+			try {
+				//SAMoApp.getService().login("pbmolini@fbk.eu", "Asdf1");
+				SAMoApp.getService().login(params[0], params[1]);
+				return true;
+			} catch (SamoServiceException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+	
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (dialog.isShowing()) dialog.dismiss();
+			if (result) {
+				SAMoApp.setUserLogged(true);
+				toggleAuthButton();
+			}
+		}
+	
+	}
+
+	private class LogoutTask extends AsyncTask<Void, Void, Boolean> {
+	
+		ProgressDialog dialog;
+		Context mContext;
+	
+		/**
+		 * 
+		 */
+		public LogoutTask(Context context) {
+			this.mContext = context;
+			dialog = new ProgressDialog(mContext);
+			dialog.setTitle("Loading");
+		}
+	
+		@Override
+		protected void onPreExecute() {
+			dialog.show();
+		}
+	
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			try {
+				SAMoApp.getService().logout();
+				return true;
+			} catch (SamoServiceException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+	
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (dialog.isShowing()) dialog.dismiss();
+			if (result) {
+				SAMoApp.setUserLogged(false);
+				toggleAuthButton();	
+			}
+		}
+	
 	}
 }

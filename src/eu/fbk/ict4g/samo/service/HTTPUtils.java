@@ -40,6 +40,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.util.Log;
+import eu.fbk.ict4g.samo.utils.SAMoConsts;
 import eu.fbk.ict4g.samo.utils.SAMoLog;
 
 /**
@@ -229,11 +230,13 @@ public class HTTPUtils {
         }
     }
 	
-	public synchronized void sendHTTPRequestPOST(String url, JSONObject jsonObject) throws SamoServiceException {
+	public synchronized JSONObject sendHTTPRequestPOST(String url, JSONObject jsonObject) throws SamoServiceException {
+		JSONObject result = null;
 		SAMoLog.d(this.getClass().getSimpleName(), url);
 		HttpPost httpPost = new HttpPost(url);
 //		ResponseHandler<String> responseHandler = new BasicResponseHandler();
 		try {
+			String respStr = "";
 			httpPost.setHeader("Content-Type", "application/json");
 			httpPost.setHeader("Accepts", "application/json");
 			httpPost.setEntity(new StringEntity(jsonObject.toString()));
@@ -274,8 +277,15 @@ public class HTTPUtils {
                     total.append(line);
                 }
                 SAMoLog.d(this.getClass().getSimpleName(), total.toString());
+                respStr = total.toString();
                 
             }
+			respStr = respStr.replaceAll("\\p{C}", "");
+			Log.d("JSON response after replacing", respStr);
+			result = new JSONObject(respStr);
+			if (!result.optBoolean(SAMoConsts.success))
+				throw new SamoServiceException(result.optString(SAMoConsts.message));
+			
 		} catch (UnsupportedEncodingException e) {
 			throw new SamoServiceException(e);
 		} catch (ClientProtocolException e) {
@@ -285,7 +295,7 @@ public class HTTPUtils {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		
+		return result;
 	}
 	
 	public void clearCache() {

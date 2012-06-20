@@ -11,6 +11,7 @@
     <string name="assessor">Assessor</string>
     <string name="campaign_details">Campaign Details</string>
     <string name="campaigns">Campaigns</string>
+    <string name="cancel">Cancel</string>
     <string name="close">Close</string>
     <string name="email">Email</string>
     <string name="email_hint">Type here your email</string>
@@ -28,12 +29,14 @@
     <string name="indicators">Indicators</string>
     <string name="loading">Loading&#8230;</string>
     <string name="login">Login</string>
+    <string name="logout">Logout</string>
     <string name="manage_assessments">Manage Assessments</string>
     <string name="minus">-</string>
     <string name="name">Name</string>
     <string name="name_hint">Type the name of this assessment</string>
     <string name="new_assessment">New Assessment</string>
     <string name="no">No</string>
+    <string name="ok">OK</string>
     <string name="password">Password</string>
     <string name="password_hint">Type here your password</string>
     <string name="populating_db">Populating DB&#8230;</string>
@@ -51,6 +54,7 @@
     <string name="toast_db_saved_in">"Database saved in "</string>
     <string name="toast_error_cannot_connect">Cannot connect to the server</string>
     <string name="toast_error_db_saved">ERROR: Database cannot be saved</string>
+    <string name="toast_error_nothing_to_upload">There is nothing to upload!</string>
     <string name="upload">Upload</string>
     <string name="upload_all">Upload all</string>
     <string name="upload_assmnt">Upload assessment</string>

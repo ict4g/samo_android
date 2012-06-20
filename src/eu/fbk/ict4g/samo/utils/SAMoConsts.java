@@ -2,6 +2,7 @@ package eu.fbk.ict4g.samo.utils;
 
 public class SAMoConsts {
 	
+	public static final String attemptedRecord = "attempted_record";
 	public static final String city = "city";
 	public static final String country = "country";
 	public static final String dateFrom = "date_from";
@@ -12,16 +13,18 @@ public class SAMoConsts {
 	public static final String latitude = "latitude";
 	public static final String locale = "locale";
 	public static final String longitude = "longitude";
+	public static final String message = "message";
 	public static final String name = "name";
 	public static final String password = "password";
 	public static final String phone = "phone";
+	public static final String sessionId = "session_id";
 	public static final String state = "state";
 	public static final String street = "street";
+	public static final String success = "success";
 	public static final String targets = "targets";
 	public static final String title = "title";
 	public static final String indicator_type = "indicator_type";
 	public static final String value = "value";
 	public static final String zip = "zip";
-	
 
 }

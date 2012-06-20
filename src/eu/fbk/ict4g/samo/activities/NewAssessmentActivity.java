@@ -37,7 +37,7 @@ import eu.fbk.ict4g.samo.models.Indicator;
 import eu.fbk.ict4g.samo.models.Target;
 
 public class NewAssessmentActivity extends Activity {
-	
+
 	SamoDbDataSource dataSource;
 
 	ArrayAdapter<Target> targetAdapter;
@@ -55,7 +55,7 @@ public class NewAssessmentActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.new_assessment);
-		
+
 		ListView listView = (ListView) findViewById(R.id.indicatorsListView);
 		Spinner spinner = (Spinner) findViewById(R.id.targetSpinner);
 		nameEditText = (EditText) findViewById(R.id.nameEditText);
@@ -72,9 +72,10 @@ public class NewAssessmentActivity extends Activity {
 		if (savedInstanceState != null) {
 			Log.d(getClass().getSimpleName(), "savedInstanceState is NOT null");
 			indicators = savedInstanceState.getParcelableArrayList(getString(R.string.indicators));	
-			for (Indicator i : indicators) {
-				Log.d(getClass().getSimpleName(), "saved value for " + i.getName() + " is " + i.getValue());
-			}
+			if (indicators != null)
+				for (Indicator i : indicators) {
+					Log.d(getClass().getSimpleName(), "saved value for " + i.getName() + " is " + i.getValue());
+				}
 		} else {
 			Log.d(getClass().getSimpleName(), "savedInstanceState is null");
 			indicators = (ArrayList<Indicator>) dataSource.getAllIndicators();
@@ -189,8 +190,8 @@ public class NewAssessmentActivity extends Activity {
 		newAssessment.setName(nameEditText.getText().toString());
 		newAssessment.setTargetId(selectedTarget.getId());
 		newAssessment.setTargetName(selectedTarget.getName());
-		newAssessment.setAssessorId(1); // TODO get it from somewhere
-		newAssessment.setAssessorName("Assessor"); // TODO get it from somewhere
+		newAssessment.setAssessorId(SAMoApp.getUserId()); 
+		newAssessment.setAssessorName(SAMoApp.getUserName()); 
 		newAssessment.setCampaignId(SAMoApp.getCurrentCampaign().getRemId());
 
 		// date stuff
@@ -198,7 +199,7 @@ public class NewAssessmentActivity extends Activity {
 		String month = (now.get(Calendar.MONTH) + 1) < 10 ? "0" + (now.get(Calendar.MONTH) + 1) : (now.get(Calendar.MONTH) + 1) + "";
 		String day = now.get(Calendar.DAY_OF_MONTH) < 10 ? "0" + now.get(Calendar.DAY_OF_MONTH) : now.get(Calendar.DAY_OF_MONTH) + "";
 		newAssessment.setDate(now.get(Calendar.YEAR) + "-" + month + "-" + day);
-		
+
 		newAssessment.setIndicators(indicators);
 		dataSource.createAssessment(newAssessment);
 		finish();
@@ -273,17 +274,17 @@ public class NewAssessmentActivity extends Activity {
 				// value
 				// set the listeners
 				holder.ratingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
-					
+
 					@Override
 					public void onRatingChanged(RatingBar ratingBar, float rating,
 							boolean fromUser) {
 						if (fromUser) {
 							currentIndicator.setValue("" + rating);
 						}
-						
+
 					}
 				});
-				
+
 				// restore previous value, if any
 				if (currentIndicator.getValue() != null) 
 					holder.ratingBar.setRating(Float.parseFloat(currentIndicator.getValue().toString()));

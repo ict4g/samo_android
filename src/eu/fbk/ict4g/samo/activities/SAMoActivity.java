@@ -3,16 +3,12 @@ package eu.fbk.ict4g.samo.activities;
 import java.util.List;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import eu.fbk.ict4g.samo.db.SamoDbDataSource;
 import eu.fbk.ict4g.samo.db.SamoDbHelper;
 import eu.fbk.ict4g.samo.models.Campaign;
-import eu.fbk.ict4g.samo.service.SamoServiceException;
 
 public class SAMoActivity extends Activity {
 	
@@ -64,144 +60,11 @@ public class SAMoActivity extends Activity {
 			startActivity(intent);
 			break;
 
-		case R.id.publishButton:
-			new PublishTask(this).execute();
-			break;
-
-		case R.id.loginButton:
-			new LoginTask(this).execute();
-			break;
-
-		case R.id.logoutButton:
-			new LogoutTask(this).execute();
-			break;
-
 		case R.id.campaignDetailsButton:
 			intent = new Intent(this, CampaignDetails.class);
 			startActivity(intent);
 			break;
 			
 		}
-	}
-
-	private class PublishTask extends AsyncTask<Void, Void, Boolean> {
-
-		ProgressDialog dialog;
-		Context mContext;
-
-		/**
-		 * 
-		 */
-		 public PublishTask(Context context) {
-			 this.mContext = context;
-			 dialog = new ProgressDialog(mContext);
-			 dialog.setTitle("Loading");
-		 }
-
-		 @Override
-		 protected void onPreExecute() {
-			 dialog.show();
-		 }
-
-		 @Override
-		 protected Boolean doInBackground(Void... params) {
-			 try {
-				 SAMoApp.getService().publishAssessment(null);
-				 //				SAMoApp.getService().publishAllAssessments();
-				 return true;
-			 } catch (SamoServiceException e) {
-				 e.printStackTrace();
-				 return false;
-			 }
-		 }
-
-		 @Override
-		 protected void onPostExecute(Boolean result) {
-			 if (dialog.isShowing()) dialog.dismiss();
-			 if (result) {
-
-			 }
-		 }
-
-	}
-
-	private class LoginTask extends AsyncTask<Void, Void, Boolean> {
-
-		ProgressDialog dialog;
-		Context mContext;
-
-		/**
-		 * 
-		 */
-		public LoginTask(Context context) {
-			this.mContext = context;
-			dialog = new ProgressDialog(mContext);
-			dialog.setTitle("Loading");
-		}
-
-		@Override
-		protected void onPreExecute() {
-			dialog.show();
-		}
-
-		@Override
-		protected Boolean doInBackground(Void... params) {
-			try {
-				SAMoApp.getService().login("pbmolini@fbk.eu", "12345");
-				return true;
-			} catch (SamoServiceException e) {
-				e.printStackTrace();
-				return false;
-			}
-		}
-
-		@Override
-		protected void onPostExecute(Boolean result) {
-			if (dialog.isShowing()) dialog.dismiss();
-			if (result) {
-
-			}
-		}
-
-	}
-
-	private class LogoutTask extends AsyncTask<Void, Void, Boolean> {
-	
-		ProgressDialog dialog;
-		Context mContext;
-	
-		/**
-		 * 
-		 */
-		public LogoutTask(Context context) {
-			this.mContext = context;
-			dialog = new ProgressDialog(mContext);
-			dialog.setTitle("Loading");
-		}
-	
-		@Override
-		protected void onPreExecute() {
-			dialog.show();
-		}
-	
-		@Override
-		protected Boolean doInBackground(Void... params) {
-			try {
-				SAMoApp.getService().logout();
-				return true;
-			} catch (SamoServiceException e) {
-				e.printStackTrace();
-				return false;
-			}
-		}
-	
-		@Override
-		protected void onPostExecute(Boolean result) {
-			if (dialog.isShowing()) dialog.dismiss();
-			if (result) {
-	
-			}
-		}
-	
 	}
 }

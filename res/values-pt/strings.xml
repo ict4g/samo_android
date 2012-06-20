@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="about_to_delete_all">"Está prestes a eliminar todas as entrevistas"</string>    
+    <string name="about_to_dump_db">"Está prestes a fazer uma cópia da Base de Dados"</string>
+    <string name="about_to_use">"Está prestes a usar "</string>
+    <string name="about_to_upload_all">"Está prestes a enviar todas as entrevistas"</string>
+    <string name="app_name">SAMO</string>
+    <string name="are_you_sure">Tem certeza?</string>
+    <string name="assessments">Entrevistas</string>
+    <string name="assessor">Assessor</string>
+    <string name="campaign_details">Detalhes da campanha</string>
+    <string name="campaigns">Campanhas</string>
+    <string name="close">Fechar</string>
+    <string name="email">Email</string>
+    <string name="email_hint">Escreva aqui o seu email</string>
+    <string name="date">Data</string>
+    <string name="delete_all">Apagar tudo</string>
+    <string name="delete_assmnt">Apagar entrevista</string>
+    <string name="deleting_assessment">Apagando a entrevista&#8230;</string>
+    <string name="details">Detalhes</string>
+    <string name="dwnld_avail_assmts">Baixar as entrevistas disponíveis</string>
+    <string name="dwnld_avail_campaigns">Baixar campanhas disponíveis</string>
+    <string name="hello">Hello World, SAMoActivity!</string>
+    <string name="hundred_percent">100%</string>
+    <string name="ending_date">Data do fim</string>
+    <string name="indicator">Indicador</string>
+    <string name="indicators">Indicadores</string>
+    <string name="loading">Carregando&#8230;</string>
+    <string name="login">Entrar</string>
+    <string name="logout">Sair</string>
+    <string name="manage_assessments">Gerir entrevisas</string>
+    <string name="minus">-</string>
+    <string name="name">Nome</string>
+    <string name="name_hint">Escreva o nome desta entrevista</string>
+    <string name="new_assessment">Nova entrevista</string>
+    <string name="no">Nao</string>
+    <string name="password">Senha</string>
+    <string name="password_hint">Escreva aqui a sua senha</string>
+    <string name="populating_db">Preenchendo a BD&#8230;</string>
+    <string name="plus">+</string>
+    <string name="save">Gravar</string>
+    <string name="save_db">Gravar uma cópia da Base de Dados</string>
+    <string name="saving_assessment">Gravando a entrevista&#8230;</string>
+    <string name="sel_campaign">Escolha a campanha</string>
+    <string name="starting_date">Data de início</string>
+    <string name="target">Alvo</string>
+    <string name="targets">Alvos</string>
+    <string name="toast_all_assmnts_deleted ">Todas entrevistas apagadas!</string>
+    <string name="toast_assmnt_deleted ">Entrevista apagada!</string>
+    <string name="toast_assmnt_uploaded ">Entrevista carregada!</string>
+    <string name="toast_db_saved_in">"Base de Dados gravada em "</string>
+    <string name="toast_error_cannot_connect">Não e possível conectar-se ao servidor</string>
+    <string name="toast_error_db_saved">ERRO: A Base de Dados não pode ser gravada</string>
+    <string name="toast_error_nothing_to_upload">Não há nada para carregar!</string>
+    <string name="upload">Carregar</string>
+    <string name="upload_all">Carregar tudo</string>
+    <string name="upload_assmnt">Carregar Entrevista</string>
+    <string name="yes">Sim</string>
+
+</resources>

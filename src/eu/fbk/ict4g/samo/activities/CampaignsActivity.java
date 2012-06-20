@@ -136,10 +136,6 @@ public class CampaignsActivity extends Activity {
 		case R.id.downloadButton:
 			new CampaignsTask(this).execute();
 			break;
-		case R.id.logDbButton:
-			Log.d(this.getClass().getSimpleName(), dataSource.getAllIndicators().toString());
-			Log.d(this.getClass().getSimpleName(), dataSource.getAllTargets().toString());
-			break;
 
 		case R.id.deleteAllButton:
 			dataSource.deleteAllTargets();

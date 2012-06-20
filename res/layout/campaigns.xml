@@ -28,18 +28,12 @@
         android:contentDescription="@string/app_name" />
 
     <Button
-        android:id="@+id/logDbButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onClick"
-        android:text="log db" />
-
-    <Button
         android:id="@+id/deleteAllButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onClick"
-        android:text="clear" />
+        android:text="clear"
+        android:visibility="gone" />
 
     <ListView
         android:id="@+id/listView"
