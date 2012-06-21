@@ -25,7 +25,7 @@ import eu.fbk.ict4g.samo.models.Target;
 public class SamoDbDataSource {
 
 	private SimpleDateFormat dateFormat;
-	
+
 	// Database fields
 	private SQLiteDatabase database;
 	private SamoDbHelper dbHelper;
@@ -37,7 +37,7 @@ public class SamoDbDataSource {
 					+ SamoDbHelper.COLUMN_NAME;
 
 	public SamoDbDataSource(Context context) {
-		
+
 		if (dbHelper == null) dbHelper =  new SamoDbHelper(context);
 		dateFormat = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
 	}
@@ -51,7 +51,12 @@ public class SamoDbDataSource {
 
 	public void close() {
 		Log.d(this.getClass().getSimpleName(), "close()");
-		dbHelper.close();
+		try {
+			if (dbHelper != null)
+				dbHelper.close();
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public synchronized void addIndicatorColumn(Indicator indicator) {
@@ -113,7 +118,7 @@ public class SamoDbDataSource {
 		cursor.close();
 		//return newAssessment;
 	}
-	
+
 	public synchronized Campaign createCampaign(Campaign campaign) {
 		ContentValues values = new ContentValues();
 		values.put(SamoDbHelper.COLUMN_TITLE, campaign.getTitle());
@@ -130,7 +135,7 @@ public class SamoDbDataSource {
 		Campaign newCampaign = cursorToCampaign(cursor);
 		cursor.close();
 		return newCampaign;
-		
+
 	}
 
 	public synchronized Indicator createIndicator(Indicator indicator) {
@@ -234,7 +239,7 @@ public class SamoDbDataSource {
 		cursor.close();
 		return assessments;
 	}
-	
+
 	public List<Campaign> getAllCampaigns() {
 		List<Campaign> campaigns = new ArrayList<Campaign>();
 		Cursor cursor = database.query(SamoDbHelper.TABLE_CAMPAIGNS,
@@ -251,7 +256,7 @@ public class SamoDbDataSource {
 		}
 		// Make sure to close the cursor
 		cursor.close();
-		
+
 		return campaigns;
 	}
 
@@ -290,15 +295,15 @@ public class SamoDbDataSource {
 		cursor.close();
 		return targets;
 	}
-	
+
 	public void markAssessmentAsUploaded(long assessmentId) {
-		
+
 		// This can be commented
 		String[] upColumn = { SamoDbHelper.COLUMN_UPLOADED };
 		Cursor cursor = database.query(true, SamoDbHelper.TABLE_ASSESSMENTS, upColumn, SamoDbHelper.COLUMN_ID + "=" + assessmentId, null, null, null, null, null);
 		cursor.moveToFirst();
 		Log.d(this.getClass().getSimpleName(), "uploaded is " + cursor.getInt(cursor.getPosition()));
-		
+
 		ContentValues values = new ContentValues();
 		values.put(SamoDbHelper.COLUMN_UPLOADED, 1);
 		database.update(SamoDbHelper.TABLE_ASSESSMENTS, values, SamoDbHelper.COLUMN_ID + "=" + assessmentId, null);
@@ -317,7 +322,7 @@ public class SamoDbDataSource {
 			Log.d("column " + i, c.getColumnNames()[i]);
 		}
 	}
-	
+
 	public synchronized void resetAll() {
 		database.execSQL("DROP TABLE IF EXISTS " + SamoDbHelper.TABLE_INDICATORS);
 		database.execSQL(SamoDbHelper.TABLE_INDICATORS_CREATE);
@@ -326,44 +331,44 @@ public class SamoDbDataSource {
 		database.execSQL("DROP TABLE IF EXISTS " + SamoDbHelper.TABLE_CAMPAIGNS);
 		database.execSQL(SamoDbHelper.TABLE_CAMPAIGNS_CREATE);
 		resetAssessmentsTable();
-		
+
 	}
-	
+
 	public synchronized void resetAssessmentsTable() {
 		database.execSQL("DROP TABLE IF EXISTS " + SamoDbHelper.TABLE_ASSESSMENTS);
 		database.execSQL(SamoDbHelper.TABLE_ASSESSMENTS_CREATE);
 	}
-	
+
 	public String dumpDatabase() {
 		String result = null;
 		try {	
 			Log.w(this.getClass().getSimpleName(), "trying to dump the db...");
-	        File sd = Environment.getExternalStorageDirectory();
-	        
-	        if (sd.canWrite()) {
-	        	String timeStamp = dateFormat.format(Calendar.getInstance().getTime());
-	            String backupDBPath = SamoDbHelper.DATABASE_NAME + "_" + timeStamp;
-	            File currentDB = SAMoApp.getDatabasePath();
-	            File backupDB = new File(sd, backupDBPath);
-	            
-	            if (currentDB.exists()) {
-	                FileChannel src = new FileInputStream(currentDB).getChannel();
-	                FileChannel dst = new FileOutputStream(backupDB).getChannel();
-	                dst.transferFrom(src, 0, src.size());
-	                src.close();
-	                dst.close();
-	                result = backupDB.getAbsolutePath();
-	                Log.w(this.getClass().getSimpleName(), "db saved in " + backupDB.getAbsolutePath());
-	            } else
-	            	Log.w(this.getClass().getSimpleName(), "currentDB.exists() false");
-	        } else
-	        	Log.w(this.getClass().getSimpleName(), "sd.canWrite() false");
-	    } catch (Exception e) {
-	    	e.printStackTrace();
-	    }
+			File sd = Environment.getExternalStorageDirectory();
+
+			if (sd.canWrite()) {
+				String timeStamp = dateFormat.format(Calendar.getInstance().getTime());
+				String backupDBPath = SamoDbHelper.DATABASE_NAME + "_" + timeStamp;
+				File currentDB = SAMoApp.getDatabasePath();
+				File backupDB = new File(sd, backupDBPath);
+
+				if (currentDB.exists()) {
+					FileChannel src = new FileInputStream(currentDB).getChannel();
+					FileChannel dst = new FileOutputStream(backupDB).getChannel();
+					dst.transferFrom(src, 0, src.size());
+					src.close();
+					dst.close();
+					result = backupDB.getAbsolutePath();
+					Log.w(this.getClass().getSimpleName(), "db saved in " + backupDB.getAbsolutePath());
+				} else
+					Log.w(this.getClass().getSimpleName(), "currentDB.exists() false");
+			} else
+				Log.w(this.getClass().getSimpleName(), "sd.canWrite() false");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return result;
 	}
-	
+
 	private Assessment cursorToAssessment(Cursor cursor) {
 		Assessment assessment = new Assessment();
 		assessment.setId(cursor.getLong(cursor.getColumnIndex(SamoDbHelper.COLUMN_ID)));
@@ -389,7 +394,7 @@ public class SamoDbDataSource {
 		}
 		return assessment;
 	}
-	
+
 	private Campaign cursorToCampaign(Cursor cursor) {
 		Campaign campaign = new Campaign();
 		campaign.setId(cursor.getLong(cursor.getColumnIndex(SamoDbHelper.COLUMN_ID)));
@@ -417,7 +422,7 @@ public class SamoDbDataSource {
 		return target;
 
 	}
-	
+
 	private String createColumnName(String name, String type, long id) {
 		return name.replaceAll("[^A-Za-z0-9]", "").toLowerCase() + "_" + type + "_" + id;
 	}

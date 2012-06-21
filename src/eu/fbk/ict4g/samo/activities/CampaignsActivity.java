@@ -257,7 +257,8 @@ public class CampaignsActivity extends Activity {
 			if (dialog.isShowing()) dialog.dismiss();
 			if (result) {
 				Toast.makeText(mContext, R.string.toast_db_populated, Toast.LENGTH_SHORT).show();
-				finish();
+				// not finishing here because it may cause crashes due to sqlite.close() exception
+				//finish();
 			} else 
 				Toast.makeText(mContext, R.string.toast_error_db_populated, Toast.LENGTH_SHORT).show();
 		}
