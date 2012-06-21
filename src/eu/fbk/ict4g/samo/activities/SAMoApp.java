@@ -3,6 +3,7 @@ package eu.fbk.ict4g.samo.activities;
 import java.io.File;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 import eu.fbk.ict4g.samo.models.Campaign;
 import eu.fbk.ict4g.samo.service.SamoServiceIF;
 import eu.fbk.ict4g.samo.service.SamoServiceRESTful;
@@ -10,12 +11,21 @@ import eu.fbk.ict4g.samo.service.SamoServiceRESTful;
 public class SAMoApp extends Application {
 
 	public static String PACKAGE_NAME;
+	
+	private static final String SAMO_PREFS = "SAMO_PREFS";
+	private static final String USER_NAME_KEY = "USER_NAME_KEY";
+	private static final String USER_EMAIL_KEY = "USER_EMAIL_KEY";
+	
 	private static SamoServiceIF service;
 	private static Campaign currentCampaign;
 	private static File databasePath;
+	
+	private static SharedPreferences prefs;
+	
 	private static boolean userLogged;
 	private static long userId;
 	private static String userName;
+	private static String userEmail;
 	
 	@Override
 	public void onCreate() {
@@ -23,8 +33,14 @@ public class SAMoApp extends Application {
 		service = new SamoServiceRESTful(getApplicationContext(), getString(R.string.server_url));
 		userLogged = false;
 		userId = 0;
-		userName = "";
+//		userName = "";
 		PACKAGE_NAME = getApplicationContext().getPackageName();
+		
+		prefs = getSharedPreferences(SAMO_PREFS, MODE_PRIVATE);
+		
+		userName = prefs.getString(USER_NAME_KEY, "");
+		userEmail = prefs.getString(USER_EMAIL_KEY, "");
+		
 	}
 	
 	public static boolean isUserLogged() {
@@ -49,6 +65,20 @@ public class SAMoApp extends Application {
 
 	public static void setUserName(String userName) {
 		SAMoApp.userName = userName;
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString(USER_NAME_KEY, userName);
+		editor.commit();
+	}
+
+	public static String getUserEmail() {
+		return userEmail;
+	}
+
+	public static void setUserEmail(String userEmail) {
+		SAMoApp.userEmail = userEmail;
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString(USER_EMAIL_KEY, userEmail);
+		editor.commit();
 	}
 
 	public static SamoServiceIF getService() {

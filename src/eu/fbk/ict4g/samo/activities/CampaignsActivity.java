@@ -128,7 +128,6 @@ public class CampaignsActivity extends Activity {
 		}
 		Log.d(this.getClass().getSimpleName(), dataSource.getAllTargets().toString());
 
-		finish();
 	}
 
 	public void onClick(View view) {
@@ -257,8 +256,10 @@ public class CampaignsActivity extends Activity {
 		protected void onPostExecute(Boolean result) {
 			if (dialog.isShowing()) dialog.dismiss();
 			if (result) {
-				Toast.makeText(mContext, "DB Populated with selected campaign", Toast.LENGTH_SHORT).show();
-			}
+				Toast.makeText(mContext, R.string.toast_db_populated, Toast.LENGTH_SHORT).show();
+				finish();
+			} else 
+				Toast.makeText(mContext, R.string.toast_error_db_populated, Toast.LENGTH_SHORT).show();
 		}
 	
 	}

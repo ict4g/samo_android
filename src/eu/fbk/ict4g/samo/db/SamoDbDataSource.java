@@ -85,6 +85,8 @@ public class SamoDbDataSource {
 		ContentValues values = new ContentValues();
 		values.put(SamoDbHelper.COLUMN_NAME, assessment.getName());
 		values.put(SamoDbHelper.COLUMN_ASSESSOR_ID, assessment.getAssessorId());
+		// TODO 
+		values.put(SamoDbHelper.COLUMN_ASSESSOR_NAME, assessment.getAssessorName());
 		values.put(SamoDbHelper.COLUMN_CAMPAIGN_ID, assessment.getCampaignId());
 		values.put(SamoDbHelper.COLUMN_TARGET_ID, assessment.getTargetId());
 		values.put(SamoDbHelper.COLUMN_TARGET_NAME, assessment.getTargetName());
@@ -367,6 +369,8 @@ public class SamoDbDataSource {
 		assessment.setId(cursor.getLong(cursor.getColumnIndex(SamoDbHelper.COLUMN_ID)));
 		assessment.setName(cursor.getString(cursor.getColumnIndex(SamoDbHelper.COLUMN_NAME)));
 		assessment.setAssessorId(cursor.getLong(cursor.getColumnIndex(SamoDbHelper.COLUMN_ASSESSOR_ID)));
+		// TODO 
+		assessment.setAssessorName(cursor.getString(cursor.getColumnIndex(SamoDbHelper.COLUMN_ASSESSOR_NAME)));
 		assessment.setCampaignId(cursor.getLong(cursor.getColumnIndex(SamoDbHelper.COLUMN_CAMPAIGN_ID)));
 		assessment.setTargetId(cursor.getLong(cursor.getColumnIndex(SamoDbHelper.COLUMN_TARGET_ID)));
 		assessment.setTargetName(cursor.getString(cursor.getColumnIndex(SamoDbHelper.COLUMN_TARGET_NAME)));

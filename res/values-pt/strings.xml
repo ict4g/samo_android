@@ -8,7 +8,7 @@
     <string name="app_name">SAMO</string>
     <string name="are_you_sure">Tem certeza?</string>
     <string name="assessments">Entrevistas</string>
-    <string name="assessor">Assessor</string>
+    <string name="assessor">Entrevistador</string>
     <string name="campaign_details">Detalhes da campanha</string>
     <string name="campaigns">Campanhas</string>
     <string name="close">Fechar</string>
@@ -49,10 +49,14 @@
     <string name="toast_all_assmnts_deleted ">Todas entrevistas apagadas!</string>
     <string name="toast_assmnt_deleted ">Entrevista apagada!</string>
     <string name="toast_assmnt_uploaded ">Entrevista carregada!</string>
+    <string name="toast_db_populated">Base de Dados preenchida com a campanha selecionada</string>
     <string name="toast_db_saved_in">"Base de Dados gravada em "</string>
     <string name="toast_error_cannot_connect">Não e possível conectar-se ao servidor</string>
+    <string name="toast_error_db_populated">ERRO: A Base de Dados não pode ser preenchida</string>
     <string name="toast_error_db_saved">ERRO: A Base de Dados não pode ser gravada</string>
     <string name="toast_error_nothing_to_upload">Não há nada para carregar!</string>
+    <string name="toast_succ_login">Entrada bem sucedida!</string>
+    <string name="toast_succ_logout">Saída bem sucedida!</string>
     <string name="upload">Carregar</string>
     <string name="upload_all">Carregar tudo</string>
     <string name="upload_assmnt">Carregar Entrevista</string>

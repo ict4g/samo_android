@@ -12,6 +12,7 @@
     <string name="campaign_details">Campaign Details</string>
     <string name="campaigns">Campaigns</string>
     <string name="cancel">Cancel</string>
+    <string name="clear">Clear</string>
     <string name="close">Close</string>
     <string name="email">Email</string>
     <string name="email_hint">Type here your email</string>
@@ -51,10 +52,14 @@
     <string name="toast_all_assmnts_deleted ">All assessments deleted!</string>
     <string name="toast_assmnt_deleted ">Assessment deleted!</string>
     <string name="toast_assmnt_uploaded ">Assessment uploaded!</string>
+    <string name="toast_db_populated">Database populated with selected campaign</string>
     <string name="toast_db_saved_in">"Database saved in "</string>
     <string name="toast_error_cannot_connect">Cannot connect to the server</string>
+    <string name="toast_error_db_populated">ERROR: Database cannot be populated</string>
     <string name="toast_error_db_saved">ERROR: Database cannot be saved</string>
     <string name="toast_error_nothing_to_upload">There is nothing to upload!</string>
+    <string name="toast_succ_login">Login successful!</string>
+    <string name="toast_succ_logout">Logout successful!</string>
     <string name="upload">Upload</string>
     <string name="upload_all">Upload all</string>
     <string name="upload_assmnt">Upload assessment</string>

@@ -12,6 +12,7 @@ public class SamoDbHelper extends SQLiteOpenHelper {
 	public static final String TABLE_INDICATORS = "indicator";
 	public static final String TABLE_TARGETS = "target";
 	public static final String COLUMN_ASSESSOR_ID = "user";
+	public static final String COLUMN_ASSESSOR_NAME = "user_name";
 	public static final String COLUMN_CAMPAIGN_ID = "campaign_id";
 	public static final String COLUMN_DATE = "date";
 	public static final String COLUMN_DATE_FROM = "campaign_date_from";
@@ -36,6 +37,8 @@ public class SamoDbHelper extends SQLiteOpenHelper {
 			+ COLUMN_ID + " integer primary key autoincrement, " // 0
 			+ COLUMN_NAME + " text not null, " // 1
 			+ COLUMN_ASSESSOR_ID + " integer, " // 2
+			// TODO 
+			+ COLUMN_ASSESSOR_NAME + " text, " // 4
 			+ COLUMN_CAMPAIGN_ID + " integer, " // 2
 			+ COLUMN_TARGET_ID + " integer, " // 3
 			+ COLUMN_TARGET_NAME + " text, " // 4

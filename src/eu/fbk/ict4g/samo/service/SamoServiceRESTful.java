@@ -131,6 +131,7 @@ public class SamoServiceRESTful implements SamoServiceIF {
 						Log.d(this.getClass().getSimpleName(), "User id: " + attemptedRecordJson.optLong(SAMoConsts.id) + "; User name: " + attemptedRecordJson.optString(SAMoConsts.name));
 						SAMoApp.setUserId(attemptedRecordJson.optLong(SAMoConsts.id));
 						SAMoApp.setUserName(attemptedRecordJson.optString(SAMoConsts.name));
+						SAMoApp.setUserEmail(username);
 					}
 				}
 			}

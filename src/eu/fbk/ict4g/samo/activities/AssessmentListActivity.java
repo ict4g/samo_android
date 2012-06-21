@@ -182,7 +182,7 @@ public class AssessmentListActivity extends ListActivity {
 		final AlertDialog d = (AlertDialog) dialog;
 		switch (id) {
 		case DETAILS_DIALOG:
-//			final Dialog d = dialog;
+			d.getWindow().setLayout(600, 600);
 			TextView nameTextView = (TextView) d.findViewById(R.id.nameTextView);
 			TextView dateTextView = (TextView) d.findViewById(R.id.dateTextView);
 			TextView targetTextView = (TextView) d.findViewById(R.id.targetTextView);
@@ -244,6 +244,8 @@ public class AssessmentListActivity extends ListActivity {
 				}
 			});
 			
+			emailEditText.setText(SAMoApp.getUserEmail());
+			
 			break;
 		default:
 			break;
@@ -293,6 +295,75 @@ public class AssessmentListActivity extends ListActivity {
 			authTextView.setText(R.string.login);
 		}
 		
+	}
+
+	private class AssessmentAdapter extends BaseAdapter {
+	
+		private LayoutInflater mInflater;
+	
+		//        public AssessmentAdapter(Context context, int textViewResourceId,
+		//				List<Assessment> objects) {
+		//			super(context, textViewResourceId, objects);
+		//			mInflater = LayoutInflater.from(context);
+		//		}
+		public AssessmentAdapter(Context context) {
+			mInflater = LayoutInflater.from(context);
+		}
+	
+		@Override
+		public int getCount() {
+			return assessments.size();
+		}
+	
+	
+		@Override
+		public Assessment getItem(int position) {
+			return assessments.get(position);
+		}
+	
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+	
+		private class ViewHolder {
+			TextView nameTextView;
+			TextView dateTextView;
+			TextView targetTextView;
+			TextView assessorTextView;
+			ImageView badgeImageView;
+		}
+	
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			ViewHolder holder;
+			final Assessment currentAssessment = assessments.get(position);
+			if (convertView == null) {
+				convertView = mInflater.inflate(R.layout.assessment_list_item, null);
+	
+				// Creates a ViewHolder and store references to the two children views
+				// we want to bind data to.
+				holder = new ViewHolder();
+				holder.nameTextView = (TextView) convertView.findViewById(R.id.nameTextView);
+				holder.dateTextView = (TextView) convertView.findViewById(R.id.dateTextView);
+				holder.targetTextView = (TextView) convertView.findViewById(R.id.targetTextView);
+				holder.assessorTextView = (TextView) convertView.findViewById(R.id.assessorTextView);
+				holder.badgeImageView = (ImageView) convertView.findViewById(R.id.badgeImageView);
+	
+				convertView.setTag(holder);
+			} else {
+				holder = (ViewHolder) convertView.getTag();
+			}
+	
+			holder.nameTextView.setText(currentAssessment.getName());
+			holder.dateTextView.setText(currentAssessment.getDate());
+			holder.targetTextView.setText(currentAssessment.getTargetName());
+			holder.assessorTextView.setText(currentAssessment.getAssessorName());
+			holder.badgeImageView.setVisibility(currentAssessment.isUploaded() ? View.VISIBLE : View.INVISIBLE);
+	
+			return convertView;
+		}
+	
 	}
 
 	private class PublishTask extends AsyncTask<Void, Void, Boolean> {
@@ -488,79 +559,11 @@ public class AssessmentListActivity extends ListActivity {
 	
 	}
 
-	private class AssessmentAdapter extends BaseAdapter {
-
-		private LayoutInflater mInflater;
-
-		//        public AssessmentAdapter(Context context, int textViewResourceId,
-		//				List<Assessment> objects) {
-		//			super(context, textViewResourceId, objects);
-		//			mInflater = LayoutInflater.from(context);
-		//		}
-		public AssessmentAdapter(Context context) {
-			mInflater = LayoutInflater.from(context);
-		}
-
-		@Override
-		public int getCount() {
-			return assessments.size();
-		}
-
-
-		@Override
-		public Assessment getItem(int position) {
-			return assessments.get(position);
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
-
-		private class ViewHolder {
-			TextView nameTextView;
-			TextView dateTextView;
-			TextView targetTextView;
-			TextView assessorTextView;
-			ImageView badgeImageView;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			ViewHolder holder;
-			final Assessment currentAssessment = assessments.get(position);
-			if (convertView == null) {
-				convertView = mInflater.inflate(R.layout.assessment_list_item, null);
-
-				// Creates a ViewHolder and store references to the two children views
-				// we want to bind data to.
-				holder = new ViewHolder();
-				holder.nameTextView = (TextView) convertView.findViewById(R.id.nameTextView);
-				holder.dateTextView = (TextView) convertView.findViewById(R.id.dateTextView);
-				holder.targetTextView = (TextView) convertView.findViewById(R.id.targetTextView);
-				holder.assessorTextView = (TextView) convertView.findViewById(R.id.assessorTextView);
-				holder.badgeImageView = (ImageView) convertView.findViewById(R.id.badgeImageView);
-
-				convertView.setTag(holder);
-			} else {
-				holder = (ViewHolder) convertView.getTag();
-			}
-
-			holder.nameTextView.setText(currentAssessment.getName());
-			holder.dateTextView.setText(currentAssessment.getDate());
-			holder.targetTextView.setText(currentAssessment.getTargetName());
-			holder.assessorTextView.setText(currentAssessment.getAssessorName());
-			holder.badgeImageView.setVisibility(currentAssessment.isUploaded() ? View.VISIBLE : View.INVISIBLE);
-
-			return convertView;
-		}
-
-	}
-
 	private class LoginTask extends AsyncTask<String, Void, Boolean> {
 	
 		ProgressDialog dialog;
 		Context mContext;
+		String errMsg;
 	
 		/**
 		 * 
@@ -569,6 +572,7 @@ public class AssessmentListActivity extends ListActivity {
 			this.mContext = context;
 			dialog = new ProgressDialog(mContext);
 			dialog.setTitle("Loading");
+			errMsg = "";
 		}
 	
 		@Override
@@ -579,11 +583,11 @@ public class AssessmentListActivity extends ListActivity {
 		@Override
 		protected Boolean doInBackground(String... params) {
 			try {
-				//SAMoApp.getService().login("pbmolini@fbk.eu", "Asdf1");
 				SAMoApp.getService().login(params[0], params[1]);
 				return true;
 			} catch (SamoServiceException e) {
 				e.printStackTrace();
+				errMsg = e.getMessage();
 				return false;
 			}
 		}
@@ -594,7 +598,9 @@ public class AssessmentListActivity extends ListActivity {
 			if (result) {
 				SAMoApp.setUserLogged(true);
 				toggleAuthButton();
-			}
+				Toast.makeText(mContext, R.string.toast_succ_login, Toast.LENGTH_SHORT).show();
+			} else
+				Toast.makeText(mContext, errMsg, Toast.LENGTH_SHORT).show();
 		}
 	
 	}
@@ -603,6 +609,7 @@ public class AssessmentListActivity extends ListActivity {
 	
 		ProgressDialog dialog;
 		Context mContext;
+		String errMsg;
 	
 		/**
 		 * 
@@ -611,6 +618,7 @@ public class AssessmentListActivity extends ListActivity {
 			this.mContext = context;
 			dialog = new ProgressDialog(mContext);
 			dialog.setTitle("Loading");
+			errMsg = "";
 		}
 	
 		@Override
@@ -625,6 +633,7 @@ public class AssessmentListActivity extends ListActivity {
 				return true;
 			} catch (SamoServiceException e) {
 				e.printStackTrace();
+				errMsg = e.getMessage();
 				return false;
 			}
 		}
@@ -635,7 +644,9 @@ public class AssessmentListActivity extends ListActivity {
 			if (result) {
 				SAMoApp.setUserLogged(false);
 				toggleAuthButton();	
-			}
+				Toast.makeText(mContext, R.string.toast_succ_logout, Toast.LENGTH_SHORT).show();
+			} else
+				Toast.makeText(mContext, errMsg, Toast.LENGTH_SHORT).show();
 		}
 	
 	}
