@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +24,7 @@ import eu.fbk.ict4g.samo.models.Campaign;
 import eu.fbk.ict4g.samo.models.Indicator;
 import eu.fbk.ict4g.samo.models.Target;
 import eu.fbk.ict4g.samo.service.SamoServiceException;
+import eu.fbk.ict4g.samo.utils.SAMoLog;
 
 public class CampaignsActivity extends Activity {
 
@@ -46,7 +46,7 @@ public class CampaignsActivity extends Activity {
 		dataSource = new SamoDbDataSource(this);
 		dataSource.open();
 		
-		Log.d(this.getClass().getSimpleName(), dataSource.getAllIndicators().toString());
+		SAMoLog.d(this.getClass().getSimpleName(), dataSource.getAllIndicators().toString());
 		dataSource.printColumnsOfAssessmentsTable();
 
 		campaigns = new ArrayList<Campaign>();
@@ -103,30 +103,30 @@ public class CampaignsActivity extends Activity {
 		// Populate tables
 		// campaign
 		// add an entry to the campaign table
-		Log.d("campaign", campaign.getTitle());
+		SAMoLog.d("campaign", campaign.getTitle());
 		dataSource.createCampaign(campaign);
 		SAMoApp.setCurrentCampaign(campaign);
 		
 		// assessment and indicator
 		for (Indicator indicator : campaign.getIndicators()) {
 			// add a column to the assessment table
-			Log.d(this.getClass().getSimpleName(), "adding indicator column");
+			SAMoLog.d(this.getClass().getSimpleName(), "adding indicator column");
 			dataSource.addIndicatorColumn(indicator);
 			
 			// add an entry to the indicator table
-			Log.d(this.getClass().getSimpleName(), "adding indicator '" + indicator.getName() + "' with id: " + indicator.getId());
+			SAMoLog.d(this.getClass().getSimpleName(), "adding indicator '" + indicator.getName() + "' with id: " + indicator.getId());
 			dataSource.createIndicator(indicator);			
 		}
-		Log.d(this.getClass().getSimpleName(), dataSource.getAllIndicators().toString());
+		SAMoLog.d(this.getClass().getSimpleName(), dataSource.getAllIndicators().toString());
 
 		// target
-		Log.d(this.getClass().getSimpleName(), "adding targets");
+		SAMoLog.d(this.getClass().getSimpleName(), "adding targets");
 		for (Target target : campaign.getTargets()) {
 			// add an entry to the target table
-			Log.d("target", target.getName());
+			SAMoLog.d("target", target.getName());
 			dataSource.createTarget(target.getName());
 		}
-		Log.d(this.getClass().getSimpleName(), dataSource.getAllTargets().toString());
+		SAMoLog.d(this.getClass().getSimpleName(), dataSource.getAllTargets().toString());
 
 	}
 

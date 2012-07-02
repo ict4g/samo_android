@@ -2,7 +2,7 @@ package eu.fbk.ict4g.samo.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
+import eu.fbk.ict4g.samo.utils.SAMoLog;
 
 public class Indicator implements Parcelable {
 	
@@ -54,7 +54,7 @@ public class Indicator implements Parcelable {
 	}
 
 	public void setValue(String value) {
-		Log.d(this.getClass().getSimpleName() + " " + this.name, "Value is " + value);
+		SAMoLog.d(this.getClass().getSimpleName() + " " + this.name, "Value is " + value);
 		this.value = value;
 	}
 

@@ -9,7 +9,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,6 +34,7 @@ import eu.fbk.ict4g.samo.db.SamoDbDataSource;
 import eu.fbk.ict4g.samo.models.Assessment;
 import eu.fbk.ict4g.samo.models.Indicator;
 import eu.fbk.ict4g.samo.models.Target;
+import eu.fbk.ict4g.samo.utils.SAMoLog;
 
 public class NewAssessmentActivity extends Activity {
 
@@ -70,14 +70,14 @@ public class NewAssessmentActivity extends Activity {
 		spinner.setAdapter(targetAdapter);    
 
 		if (savedInstanceState != null) {
-			Log.d(getClass().getSimpleName(), "savedInstanceState is NOT null");
+			SAMoLog.d(getClass().getSimpleName(), "savedInstanceState is NOT null");
 			indicators = savedInstanceState.getParcelableArrayList(getString(R.string.indicators));	
 			if (indicators != null)
 				for (Indicator i : indicators) {
-					Log.d(getClass().getSimpleName(), "saved value for " + i.getName() + " is " + i.getValue());
+					SAMoLog.d(getClass().getSimpleName(), "saved value for " + i.getName() + " is " + i.getValue());
 				}
 		} else {
-			Log.d(getClass().getSimpleName(), "savedInstanceState is null");
+			SAMoLog.d(getClass().getSimpleName(), "savedInstanceState is null");
 			indicators = (ArrayList<Indicator>) dataSource.getAllIndicators();
 		}
 
@@ -538,7 +538,7 @@ public class NewAssessmentActivity extends Activity {
 			if (dialog.isShowing()) dialog.dismiss();
 			if (result) {
 				Toast.makeText(mContext, "Assessment created!", Toast.LENGTH_SHORT).show();
-				Log.d(mContext.getClass().getSimpleName(), "assessment created: " + newAssessment.getName() + newAssessment.getIndicators().toString());
+				SAMoLog.d(mContext.getClass().getSimpleName(), "assessment created: " + newAssessment.getName() + newAssessment.getIndicators().toString());
 			}
 		}
 

@@ -347,6 +347,7 @@ public final class R {
         public static final int saving_assessment=0x7f04002c;
         public static final int sel_campaign=0x7f04002d;
         /**      <string name="server_url">http://10.0.2.2:3000</string> 
+     <string name="server_url">http://dev.ict4g.org/samo</string> 
          */
         public static final int server_url=0x7f040000;
         public static final int starting_date=0x7f04002e;

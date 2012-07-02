@@ -15,12 +15,12 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
-import android.util.Log;
 import eu.fbk.ict4g.samo.activities.SAMoApp;
 import eu.fbk.ict4g.samo.models.Assessment;
 import eu.fbk.ict4g.samo.models.Campaign;
 import eu.fbk.ict4g.samo.models.Indicator;
 import eu.fbk.ict4g.samo.models.Target;
+import eu.fbk.ict4g.samo.utils.SAMoLog;
 
 public class SamoDbDataSource {
 
@@ -45,12 +45,12 @@ public class SamoDbDataSource {
 	public void open() throws SQLException {
 		if (database == null) {
 			database = dbHelper.getWritableDatabase();
-			Log.d(this.getClass().getSimpleName(), "open()");
+			SAMoLog.d(this.getClass().getSimpleName(), "open()");
 		}
 	}
 
 	public void close() {
-		Log.d(this.getClass().getSimpleName(), "close()");
+		SAMoLog.d(this.getClass().getSimpleName(), "close()");
 		try {
 			if (dbHelper != null)
 				dbHelper.close();
@@ -65,17 +65,17 @@ public class SamoDbDataSource {
 		String sql = "ALTER TABLE " + SamoDbHelper.TABLE_ASSESSMENTS 
 				+ " ADD COLUMN '" + colName + "' text;";
 		database.execSQL(sql);
-		Log.d("sql:", sql);
+		SAMoLog.d("sql:", sql);
 		printColumnsOfAssessmentsTable();
 	}
 
 	public void addIndicator(Indicator indicator) {
-		Log.d(this.getClass().getSimpleName(), "Indicator added deleted with name: " + indicator.getName());
+		SAMoLog.d(this.getClass().getSimpleName(), "Indicator added deleted with name: " + indicator.getName());
 		database.execSQL("ALTER TABLE " + SamoDbHelper.TABLE_INDICATORS + " ADD " + indicator.getName() + " text not null");
 	}
 
 	public void addTarget(Target target) {
-		Log.d(this.getClass().getSimpleName(), "Target added deleted with name: " + target.getName());
+		SAMoLog.d(this.getClass().getSimpleName(), "Target added deleted with name: " + target.getName());
 		database.execSQL("ALTER TABLE " + SamoDbHelper.TABLE_TARGETS + " ADD " + target.getName() + " text not null");
 	}
 
@@ -84,7 +84,7 @@ public class SamoDbDataSource {
 		Cursor c = database.query(SamoDbHelper.TABLE_ASSESSMENTS,
 				null, null, null, null, null, null);
 		for (int i = 0; i < c.getColumnNames().length; i++) {
-			Log.d("column " + i, c.getColumnNames()[i]);
+			SAMoLog.d("column " + i, c.getColumnNames()[i]);
 		}
 
 		ContentValues values = new ContentValues();
@@ -110,10 +110,10 @@ public class SamoDbDataSource {
 				null, SamoDbHelper.COLUMN_ID + " = " + insertId, null,
 				null, null, null);
 		cursor.moveToFirst();
-		Log.d("cursor size after having created", cursor.getCount() + "");
+		SAMoLog.d("cursor size after having created", cursor.getCount() + "");
 		if (cursor.getCount() > 0) {
 			Assessment newAssessment = cursorToAssessment(cursor);
-			Log.d("newAssessment", newAssessment.toString());
+			SAMoLog.d("newAssessment", newAssessment.toString());
 		}
 		cursor.close();
 		//return newAssessment;
@@ -171,28 +171,28 @@ public class SamoDbDataSource {
 
 	public synchronized void deleteAssessment(Assessment assessment) {
 		long id = assessment.getId();
-		Log.d(this.getClass().getSimpleName(), "Assessment deleted with id: " + id);
+		SAMoLog.d(this.getClass().getSimpleName(), "Assessment deleted with id: " + id);
 		database.delete(SamoDbHelper.TABLE_ASSESSMENTS, SamoDbHelper.COLUMN_ID
 				+ " = " + id, null);
 	}
 
 	public synchronized void deleteIndicator(Indicator indicator) {
 		long id = indicator.getId();
-		Log.d(this.getClass().getSimpleName(), "Indicator deleted with id: " + id);
+		SAMoLog.d(this.getClass().getSimpleName(), "Indicator deleted with id: " + id);
 		database.delete(SamoDbHelper.TABLE_INDICATORS, SamoDbHelper.COLUMN_ID
 				+ " = " + id, null);
 	}
 
 	public synchronized void deleteTarget(Target target) {
 		long id = target.getId();
-		Log.d(this.getClass().getSimpleName(), "Target deleted with id: " + id);
+		SAMoLog.d(this.getClass().getSimpleName(), "Target deleted with id: " + id);
 		database.delete(SamoDbHelper.TABLE_TARGETS, SamoDbHelper.COLUMN_ID
 				+ " = " + id, null);
 	}
 
 	public synchronized void deleteAllAssessments() {
 		database.delete(SamoDbHelper.TABLE_ASSESSMENTS, null, null);
-		Log.w(this.getClass().getSimpleName(), "All Assessments deleted");
+		SAMoLog.w(this.getClass().getSimpleName(), "All Assessments deleted");
 	}
 
 	public synchronized void deleteAllIndicatorColumns() {
@@ -207,17 +207,17 @@ public class SamoDbDataSource {
 		database.beginTransaction();
 		database.execSQL(sql);
 		database.endTransaction();
-		Log.d("sql:", sql);
+		SAMoLog.d("sql:", sql);
 	}
 
 	public synchronized void deleteAllIndicators() {
 		database.delete(SamoDbHelper.TABLE_INDICATORS, null, null);
-		Log.w(this.getClass().getSimpleName(), "All Indicators deleted");
+		SAMoLog.w(this.getClass().getSimpleName(), "All Indicators deleted");
 	}
 
 	public synchronized void deleteAllTargets() {
 		database.delete(SamoDbHelper.TABLE_TARGETS, null, null);
-		Log.w(this.getClass().getSimpleName(), "All Targets deleted");
+		SAMoLog.w(this.getClass().getSimpleName(), "All Targets deleted");
 	}
 
 	public List<Assessment> getAllAssessments() {
@@ -228,9 +228,9 @@ public class SamoDbDataSource {
 
 		cursor.moveToFirst();
 
-		Log.d(this.getClass().getSimpleName() + ".getAllAssessments()", "there are " + cursor.getCount() + " assessments rows");
+		SAMoLog.d(this.getClass().getSimpleName() + ".getAllAssessments()", "there are " + cursor.getCount() + " assessments rows");
 		while (!cursor.isAfterLast()) {
-			Log.d("cursor", cursor.toString());
+			SAMoLog.d("cursor", cursor.toString());
 			Assessment assessment = cursorToAssessment(cursor);
 			assessments.add(assessment);
 			cursor.moveToNext();
@@ -247,9 +247,9 @@ public class SamoDbDataSource {
 
 		cursor.moveToFirst();
 
-		Log.d(this.getClass().getSimpleName() + ".getAllCampaigns()", "there are " + cursor.getCount() + " campaigns rows");
+		SAMoLog.d(this.getClass().getSimpleName() + ".getAllCampaigns()", "there are " + cursor.getCount() + " campaigns rows");
 		while (!cursor.isAfterLast()) {
-			Log.d("cursor", cursor.toString());
+			SAMoLog.d("cursor", cursor.toString());
 			Campaign campaign = cursorToCampaign(cursor);
 			campaigns.add(campaign);
 			cursor.moveToNext();
@@ -267,7 +267,7 @@ public class SamoDbDataSource {
 				null, null, null, null, null, null);
 
 		cursor.moveToFirst();
-		Log.d(this.getClass().getSimpleName() + ".getAllIndicators()", "there are " + cursor.getCount() + " indicators rows");
+		SAMoLog.d(this.getClass().getSimpleName() + ".getAllIndicators()", "there are " + cursor.getCount() + " indicators rows");
 		while (!cursor.isAfterLast()) {
 			Indicator indicator = cursorToIndicator(cursor);
 			indicators.add(indicator);
@@ -285,7 +285,7 @@ public class SamoDbDataSource {
 				null, null, null, null, null, null);
 
 		cursor.moveToFirst();
-		Log.d(this.getClass().getSimpleName() + ".getAllTargets()", "there are " + cursor.getCount() + " targets rows");
+		SAMoLog.d(this.getClass().getSimpleName() + ".getAllTargets()", "there are " + cursor.getCount() + " targets rows");
 		while (!cursor.isAfterLast()) {
 			Target target = cursorToTarget(cursor);
 			targets.add(target);
@@ -302,7 +302,7 @@ public class SamoDbDataSource {
 		String[] upColumn = { SamoDbHelper.COLUMN_UPLOADED };
 		Cursor cursor = database.query(true, SamoDbHelper.TABLE_ASSESSMENTS, upColumn, SamoDbHelper.COLUMN_ID + "=" + assessmentId, null, null, null, null, null);
 		cursor.moveToFirst();
-		Log.d(this.getClass().getSimpleName(), "uploaded is " + cursor.getInt(cursor.getPosition()));
+		SAMoLog.d(this.getClass().getSimpleName(), "uploaded is " + cursor.getInt(cursor.getPosition()));
 
 		ContentValues values = new ContentValues();
 		values.put(SamoDbHelper.COLUMN_UPLOADED, 1);
@@ -311,7 +311,7 @@ public class SamoDbDataSource {
 		// This can be commented
 		cursor = database.query(true, SamoDbHelper.TABLE_ASSESSMENTS, upColumn, SamoDbHelper.COLUMN_ID + "=" + assessmentId, null, null, null, null, null);
 		cursor.moveToFirst();
-		Log.d(this.getClass().getSimpleName(), "uploaded is " + cursor.getInt(cursor.getPosition()));
+		SAMoLog.d(this.getClass().getSimpleName(), "uploaded is " + cursor.getInt(cursor.getPosition()));
 	}
 
 	public void printColumnsOfAssessmentsTable() {
@@ -319,7 +319,7 @@ public class SamoDbDataSource {
 		Cursor c = database.query(SamoDbHelper.TABLE_ASSESSMENTS,
 				null, null, null, null, null, null);
 		for (int i = 0; i < c.getColumnNames().length; i++) {
-			Log.d("column " + i, c.getColumnNames()[i]);
+			SAMoLog.d("column " + i, c.getColumnNames()[i]);
 		}
 	}
 
@@ -342,7 +342,7 @@ public class SamoDbDataSource {
 	public String dumpDatabase() {
 		String result = null;
 		try {	
-			Log.w(this.getClass().getSimpleName(), "trying to dump the db...");
+			SAMoLog.w(this.getClass().getSimpleName(), "trying to dump the db...");
 			File sd = Environment.getExternalStorageDirectory();
 
 			if (sd.canWrite()) {
@@ -358,11 +358,11 @@ public class SamoDbDataSource {
 					src.close();
 					dst.close();
 					result = backupDB.getAbsolutePath();
-					Log.w(this.getClass().getSimpleName(), "db saved in " + backupDB.getAbsolutePath());
+					SAMoLog.w(this.getClass().getSimpleName(), "db saved in " + backupDB.getAbsolutePath());
 				} else
-					Log.w(this.getClass().getSimpleName(), "currentDB.exists() false");
+					SAMoLog.w(this.getClass().getSimpleName(), "currentDB.exists() false");
 			} else
-				Log.w(this.getClass().getSimpleName(), "sd.canWrite() false");
+				SAMoLog.w(this.getClass().getSimpleName(), "sd.canWrite() false");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

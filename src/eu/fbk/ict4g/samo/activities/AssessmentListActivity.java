@@ -12,7 +12,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +28,7 @@ import android.widget.Toast;
 import eu.fbk.ict4g.samo.db.SamoDbDataSource;
 import eu.fbk.ict4g.samo.models.Assessment;
 import eu.fbk.ict4g.samo.service.SamoServiceException;
+import eu.fbk.ict4g.samo.utils.SAMoLog;
 
 public class AssessmentListActivity extends ListActivity {
 
@@ -70,7 +70,7 @@ public class AssessmentListActivity extends ListActivity {
 		dataSource.open();
 
 		assessments = dataSource.getAllAssessments();
-		Log.d("assessments.size()", "" + assessments.size());
+		SAMoLog.d("assessments.size()", "" + assessments.size());
 		//        assessmentAdapter = new ArrayAdapter<Assessment>(this, android.R.layout.simple_list_item_1, assessments);
 		assessmentAdapter = new AssessmentAdapter(this);
 		assessmentListView.setAdapter(assessmentAdapter);
@@ -84,7 +84,7 @@ public class AssessmentListActivity extends ListActivity {
 			public void onItemClick(AdapterView<?> parent, View view, int position,
 					long id) {
 				selectedAssessment = assessments.get(position);
-				Log.d("selectedAssessment", selectedAssessment.getName() 
+				SAMoLog.d("selectedAssessment", selectedAssessment.getName() 
 						+ selectedAssessment.getIndicators().toString() 
 						+ " target id is " + selectedAssessment.getTargetId() 
 						+ " target name is " + selectedAssessment.getTargetName());
@@ -268,7 +268,7 @@ public class AssessmentListActivity extends ListActivity {
 			break;
 
 		case R.id.uploadAllButton:
-			builder.setTitle(getString(R.string.about_to_delete_all));
+			builder.setTitle(getString(R.string.about_to_upload_all));
 			builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
 					new PublishAllTask(AssessmentListActivity.this).execute();
@@ -444,7 +444,7 @@ public class AssessmentListActivity extends ListActivity {
 					if (!assessment.isUploaded())
 						assmtsToUpload.add(assessment);
 					else
-						Log.d(mContext.getClass().getSimpleName(), "Assessment " + assessment.getName() + " should be uploaded");
+						SAMoLog.d(mContext.getClass().getSimpleName(), "Assessment " + assessment.getName() + " should be uploaded");
 				}
 				if (assmtsToUpload.isEmpty()) {
 					errMsg = getString(R.string.toast_error_nothing_to_upload);

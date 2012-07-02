@@ -3,7 +3,7 @@ package eu.fbk.ict4g.samo.db;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+import eu.fbk.ict4g.samo.utils.SAMoLog;
 
 public class SamoDbHelper extends SQLiteOpenHelper {
 
@@ -81,7 +81,7 @@ public class SamoDbHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		Log.w(SamoDbHelper.class.getName(),
+		SAMoLog.w(SamoDbHelper.class.getName(),
 				"Upgrading database from version " + oldVersion + " to "
 						+ newVersion + ", which will destroy all old data");
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_ASSESSMENTS);

@@ -10,13 +10,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.util.Log;
 import eu.fbk.ict4g.samo.activities.SAMoApp;
 import eu.fbk.ict4g.samo.models.Assessment;
 import eu.fbk.ict4g.samo.models.Campaign;
 import eu.fbk.ict4g.samo.models.Indicator;
 import eu.fbk.ict4g.samo.models.Target;
 import eu.fbk.ict4g.samo.utils.SAMoConsts;
+import eu.fbk.ict4g.samo.utils.SAMoLog;
 
 public class SamoServiceRESTful implements SamoServiceIF {
 
@@ -46,7 +46,7 @@ public class SamoServiceRESTful implements SamoServiceIF {
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 		JSONObject jsonResp = serviceInvoker.sendHTTPRequest(serverUrl + CAMPAIGNS_JSON, HTTPUtils.METHOD_GET, nameValuePairs, true);
 		if (jsonResp == null) {
-			Log.e(SamoServiceRESTful.class.getSimpleName(), "jsonResp is null");
+			SAMoLog.e(SamoServiceRESTful.class.getSimpleName(), "jsonResp is null");
 			throw new SamoServiceException("jsonResp is null");
 		}
 		ArrayList<Campaign> campaigns = new ArrayList<Campaign>();
@@ -128,7 +128,7 @@ public class SamoServiceRESTful implements SamoServiceIF {
 				if (sessionIdJson != null) {
 					JSONObject attemptedRecordJson = sessionIdJson.optJSONObject(SAMoConsts.attemptedRecord);
 					if (attemptedRecordJson != null) {
-						Log.d(this.getClass().getSimpleName(), "User id: " + attemptedRecordJson.optLong(SAMoConsts.id) + "; User name: " + attemptedRecordJson.optString(SAMoConsts.name));
+						SAMoLog.d(this.getClass().getSimpleName(), "User id: " + attemptedRecordJson.optLong(SAMoConsts.id) + "; User name: " + attemptedRecordJson.optString(SAMoConsts.name));
 						SAMoApp.setUserId(attemptedRecordJson.optLong(SAMoConsts.id));
 						SAMoApp.setUserName(attemptedRecordJson.optString(SAMoConsts.name));
 						SAMoApp.setUserEmail(username);
@@ -189,7 +189,7 @@ public class SamoServiceRESTful implements SamoServiceIF {
 				assessment.setAssessorName(SAMoApp.getUserName());
 				jsonObject.put("assessment", assessmentToJsonObject(assessment));
 			}
-			Log.d("jsonAssessment", jsonObject.toString());
+			SAMoLog.d("jsonAssessment", jsonObject.toString());
 			JSONObject jsonResp = serviceInvoker.sendHTTPRequestPOST(serverUrl + CAMPAIGNS + "/" + assessment.getCampaignId() + ASSESSMENTS_JSON, jsonObject);
 			if (jsonResp != null) {
 				if (!jsonResp.optBoolean(SAMoConsts.success)) { // success false

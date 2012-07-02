@@ -39,7 +39,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.util.Log;
 import eu.fbk.ict4g.samo.utils.SAMoConsts;
 import eu.fbk.ict4g.samo.utils.SAMoLog;
 
@@ -121,21 +120,21 @@ public class HTTPUtils {
 				// HTTP DELETE
 				HttpDelete httpDelete =  new HttpDelete(url + 
 						(nameValuePairs.isEmpty() ? "" : "/" + nameValuePairs.get(0).getValue()));
-				Log.d("HTTPRequest", httpDelete.getURI().toString());		
+				SAMoLog.d("HTTPRequest", httpDelete.getURI().toString());		
 				// execute request and get response					
 				respStr = httpClient.execute(httpDelete, responseHandler, httpContext);
 			} else if (method.equalsIgnoreCase(METHOD_PUT)) { 
 				// HTTP PUT
 				HttpPut httpPut = new HttpPut(url);
 				httpPut.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-				Log.d("HTTPRequest", httpPut.getURI().toString());			
+				SAMoLog.d("HTTPRequest", httpPut.getURI().toString());			
 				// execute request and get response		
 				respStr = httpClient.execute(httpPut, responseHandler, httpContext);
 			} else { 
 				// HTTP POST - default for php client
 				HttpPost httpPost = new HttpPost(url);
 				httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, HTTP.UTF_8));
-				Log.d("HTTPRequest", httpPost.getURI().toString());		
+				SAMoLog.d("HTTPRequest", httpPost.getURI().toString());		
 				// execute request and get response
 //				respStr = httpClient.execute(httpPost, responseHandler, httpContext);
 				
@@ -163,7 +162,7 @@ public class HTTPUtils {
 			// This replacement deletes the non-unicode characters that may break the JSON encapsulation
 			//Log.d("JSON response before replacing", responseGet);
 			respStr = respStr.replaceAll("\\p{C}", "");
-			Log.d("JSON response after replacing", respStr);
+			SAMoLog.d("JSON response after replacing", respStr);
 			if (isArray) {
 				JSONArray jsonArray = new JSONArray(respStr);
 				result = new JSONObject();
@@ -281,7 +280,7 @@ public class HTTPUtils {
                 
             }
 			respStr = respStr.replaceAll("\\p{C}", "");
-			Log.d("JSON response after replacing", respStr);
+			SAMoLog.d("JSON response after replacing", respStr);
 			result = new JSONObject(respStr);
 			if (!result.optBoolean(SAMoConsts.success))
 				throw new SamoServiceException(result.optString(SAMoConsts.message));
