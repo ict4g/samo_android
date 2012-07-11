@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="eu.fbk.ict4g.samo.activities"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk android:minSdkVersion="11" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <application
+        android:icon="@drawable/icon"
+        android:label="@string/app_name" android:name="SAMoApp">
+        <activity
+            android:name=".SAMo"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".NewAssessment" android:windowSoftInputMode="adjustPan"></activity>
+        <activity android:name=".AssessmentsList"></activity>
+        <activity android:name=".CampaignsList"></activity>
+        <activity android:name=".CampaignDetailsOld"></activity>
+        <activity android:name=".CampaignDetails"></activity>
+        <activity android:name=".TargetDetails"></activity>
+    </application>
+
+</manifest>
