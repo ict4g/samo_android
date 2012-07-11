@@ -7,7 +7,7 @@ import android.util.Log;
  *
  */
 public class SAMoLog {
-	private static final boolean debug = false;
+	private static final boolean debug = true;
 
 	/**
 	 * Wrapper method for <i>verbose</i> messages

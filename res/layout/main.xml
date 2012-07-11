@@ -46,6 +46,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:onClick="onClick"
+                    android:contentDescription="@string/app_name"
                     android:src="@drawable/vuvuzela_128_sel" />
             </LinearLayout>
 
@@ -69,6 +70,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:onClick="onClick"
+                    android:contentDescription="@string/app_name"
                     android:src="@drawable/edit_128_sel" />
             </LinearLayout>
         </TableRow>
@@ -98,6 +100,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:onClick="onClick"
+                    android:contentDescription="@string/app_name"
                     android:src="@drawable/view_128_sel" />
 
             </LinearLayout>
@@ -122,6 +125,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:onClick="onClick"
+                    android:contentDescription="@string/app_name"
                     android:src="@drawable/list_128_sel" />
             </LinearLayout>
         </TableRow>

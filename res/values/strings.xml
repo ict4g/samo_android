@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="_enabled">" enabled"</string>
     <string name="about_to_delete_all">"You are about to delete all the assessments"</string>    
     <string name="about_to_dump_db">"You are about to dump a copy of the database"</string>
     <string name="about_to_use">"You are about to use "</string>
     <string name="about_to_upload_all">"You are about to upload all the assessments"</string>
+    <string name="accuracy">Accuracy</string>
+    <string name="altitude">Altitude</string>
     <string name="app_name">SAMo</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="assessments">Assessments</string>
@@ -12,6 +15,7 @@
     <string name="campaign_details">Campaign Details</string>
     <string name="campaigns">Campaigns</string>
     <string name="cancel">Cancel</string>
+    <string name="coords">Coordinates</string>
     <string name="clear">Clear</string>
     <string name="close">Close</string>
     <string name="email">Email</string>
@@ -28,14 +32,18 @@
     <string name="ending_date">Ending date</string>
     <string name="indicator">Indicator</string>
     <string name="indicators">Indicators</string>
+    <string name="latitude">Latitude</string>
     <string name="loading">Loading&#8230;</string>
     <string name="login">Login</string>
     <string name="logout">Logout</string>
+    <string name="longitude">Longitude</string>
     <string name="manage_assessments">Manage Assessments</string>
     <string name="minus">-</string>
     <string name="name">Name</string>
     <string name="name_hint">Type the name of this assessment</string>
     <string name="new_assessment">New Assessment</string>
+    <string name="num_sats">Number of Satellites</string>
+    <string name="num_fixes">Number of Fixes</string>
     <string name="no">No</string>
     <string name="ok">OK</string>
     <string name="password">Password</string>
@@ -43,15 +51,19 @@
     <string name="populating_db">Populating DB&#8230;</string>
     <string name="plus">+</string>
     <string name="save">Save</string>
+    <string name="save_coords">Save coordinates</string>
     <string name="save_db">Save a copy of the database</string>
     <string name="saving_assessment">Saving Assessment&#8230;</string>
     <string name="sel_campaign">Select Campaign</string>
+    <string name="start_gps">Start GPS</string>
     <string name="starting_date">Starting date</string>
+    <string name="stop_gps">Stop GPS</string>
     <string name="target">Target</string>
     <string name="targets">Targets</string>
     <string name="toast_all_assmnts_deleted ">All assessments deleted!</string>
     <string name="toast_assmnt_deleted ">Assessment deleted!</string>
     <string name="toast_assmnt_uploaded ">Assessment uploaded!</string>
+    <string name="toast_coords_updated">Coordinates successfully updated!</string>
     <string name="toast_db_populated">Database populated with selected campaign</string>
     <string name="toast_db_saved_in">"Database saved in "</string>
     <string name="toast_error_cannot_connect">Cannot connect to the server</string>
@@ -60,6 +72,9 @@
     <string name="toast_error_nothing_to_upload">There is nothing to upload!</string>
     <string name="toast_succ_login">Login successful!</string>
     <string name="toast_succ_logout">Logout successful!</string>
+    <string name="unknown">Unknown</string>
+    <string name="update_coords">Update coordinates</string>
+    <string name="updating_coords">Updating coordinates</string>
     <string name="upload">Upload</string>
     <string name="upload_all">Upload all</string>
     <string name="upload_assmnt">Upload assessment</string>

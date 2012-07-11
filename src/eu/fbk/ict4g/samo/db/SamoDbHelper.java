@@ -19,14 +19,16 @@ public class SamoDbHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_DATE_TO = "campaign_date_to";
 	public static final String COLUMN_DESCRIPTION = "campaign_description";
 	public static final String COLUMN_ID = "_id";
+	public static final String COLUMN_LATITUDE = "latitude";
+	public static final String COLUMN_LONGITUDE = "longitude";
 	public static final String COLUMN_NAME = "name";
-	public static final String COLUMN_VALUE = "value";
 	public static final String COLUMN_REMOTE_ID = "remId";
 	public static final String COLUMN_TARGET_ID = "target";
 	public static final String COLUMN_TARGET_NAME = "target_name";
 	public static final String COLUMN_TITLE = "campaign_title";
 	public static final String COLUMN_TYPE = "indicator_type";
 	public static final String COLUMN_UPLOADED = "uploaded";
+	public static final String COLUMN_VALUE = "value";
 
 	public static final String DATABASE_NAME = "samo.db";
 	private static final int DATABASE_VERSION = 1;
@@ -37,7 +39,6 @@ public class SamoDbHelper extends SQLiteOpenHelper {
 			+ COLUMN_ID + " integer primary key autoincrement, " // 0
 			+ COLUMN_NAME + " text not null, " // 1
 			+ COLUMN_ASSESSOR_ID + " integer, " // 2
-			// TODO 
 			+ COLUMN_ASSESSOR_NAME + " text, " // 4
 			+ COLUMN_CAMPAIGN_ID + " integer, " // 2
 			+ COLUMN_TARGET_ID + " integer, " // 3
@@ -64,8 +65,11 @@ public class SamoDbHelper extends SQLiteOpenHelper {
 	
 	public static final String TABLE_TARGETS_CREATE = "create table "
 			+ TABLE_TARGETS + "( " + COLUMN_ID
-			+ " integer primary key autoincrement, " + COLUMN_NAME
-			+ " text not null);";
+			+ " integer primary key autoincrement, " 
+			+ COLUMN_LATITUDE + " real, "
+			+ COLUMN_LONGITUDE + " real, "
+			+ COLUMN_NAME + " text not null"
+			+ ");";
 
 	public SamoDbHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);

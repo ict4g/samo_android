@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="mapViewStyle">
         <item name="android:gravity">center</item>
@@ -26,19 +26,5 @@
     <style name="imageGrayButton" parent="android:Widget.Button">
         <item name="android:background">@drawable/image_gray_button_bg</item>
         <item name="android:layout_margin">5dp</item>
-    </style>
-    <style name="NotificationFontRed" parent="@android:style/TextAppearance.Medium">
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/Red</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:typeface">monospace</item>
-    </style>
-    <style name="NotificationFontSnow" parent="@android:style/TextAppearance.Medium">
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/Snow</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:typeface">monospace</item>
     </style>
 </resources>
