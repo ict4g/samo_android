@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="server_url">http://10.0.2.2:3000</string>
+<!--     <string name="server_url">http://dev.ict4g.org/samo</string> -->
+<!--     <string name="server_url">http:/ict4g.org/samo</string> -->
     
 </resources>
