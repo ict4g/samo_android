@@ -86,6 +86,8 @@ public class SamoDbDataSource {
 		for (int i = 0; i < c.getColumnNames().length; i++) {
 			SAMoLog.d(TAG, "column " + i + ": " + c.getColumnNames()[i]);
 		}
+		
+		c.close();
 
 		ContentValues values = new ContentValues();
 		values.put(SamoDbHelper.COLUMN_NAME, assessment.getName());

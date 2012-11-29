@@ -186,7 +186,7 @@ public class HTTPUtils {
 			CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
 			credentialsProvider.setCredentials(
                     new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT),
-                    new UsernamePasswordCredentials("pbmolini@fbk.eu", "12345"));
+                    new UsernamePasswordCredentials("email", "password"));
 			
 			
 			httpClient.setCredentialsProvider(credentialsProvider);
