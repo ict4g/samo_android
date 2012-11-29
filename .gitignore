@@ -1,3 +1,4 @@
 *.class
 bin/
 *.apk
+res/values/addresses.xml 
