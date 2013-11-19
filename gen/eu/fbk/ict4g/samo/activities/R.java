@@ -393,8 +393,6 @@ public final class R {
         public static final int save_db=0x7f040034;
         public static final int saving_assessment=0x7f040035;
         public static final int sel_campaign=0x7f040036;
-        /**      <string name="server_url">http://10.0.2.2:3000</string> 
-         */
         public static final int server_url=0x7f040000;
         public static final int start_gps=0x7f040037;
         public static final int starting_date=0x7f040038;
